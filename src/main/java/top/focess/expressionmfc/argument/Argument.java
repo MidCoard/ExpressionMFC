@@ -5,7 +5,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import top.focess.expressionmfc.exception.UnknownArgumentException;
 import top.focess.expressionmfc.expression.Constable;
 import top.focess.expressionmfc.expression.Simplifiable;
-import top.focess.expressionmfc.expression.simple.*;
+import top.focess.expressionmfc.expression.simple.SimpleExpression;
+import top.focess.expressionmfc.expression.simple.SimpleMonomial;
+import top.focess.expressionmfc.expression.simple.SimpleMonomialable;
+import top.focess.expressionmfc.expression.simple.SimplePolynomial;
 import top.focess.expressionmfc.expression.simple.constant.SimpleConstable;
 import top.focess.expressionmfc.expression.simple.constant.SimpleConstantLong;
 import top.focess.expressionmfc.operator.Operator;
@@ -15,7 +18,12 @@ import java.util.List;
 
 public class Argument extends SimpleExpression implements SimpleMonomialable, Comparable<Argument> {
 
-    public static final Argument NULL_ARGUMENT = new Argument("", SimpleConstantLong.ONE);
+    public static final Argument NULL_ARGUMENT = new Argument("", SimpleConstantLong.ONE) {
+        @Override
+        public @NonNull String toString() {
+            return "1";
+        }
+    };
     private final String name;
 
     private Constable value;
@@ -49,7 +57,7 @@ public class Argument extends SimpleExpression implements SimpleMonomialable, Co
     }
 
     @Override
-    public @NonNull SimpleExpression clone() {
+    public @NonNull Argument clone() {
         return new Argument(this.name, this.value);
     }
 
@@ -118,6 +126,18 @@ public class Argument extends SimpleExpression implements SimpleMonomialable, Co
     @Override
     public @NonNull SimpleMonomial reverse() {
         return new SimpleMonomial(SimpleConstantLong.ONE.reverse(), this);
+    }
+
+    @Override
+    public @NonNull List<Argument> getSameArguments() {
+        return Collections.singletonList(this);
+    }
+
+    @Override
+    public @NonNull Argument removeSameArguments(List<Argument> arguments) {
+        if (arguments.contains(this))
+            return NULL_ARGUMENT;
+        else return this.clone();
     }
 
     @NonNull

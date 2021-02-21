@@ -1,12 +1,9 @@
 package top.focess.expressionmfc.argument;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.units.qual.C;
-import top.focess.expressionmfc.exception.DivideByZeroException;
 import top.focess.expressionmfc.exception.UnknownArgumentException;
 import top.focess.expressionmfc.expression.Constable;
 import top.focess.expressionmfc.expression.Simplifiable;
-import top.focess.expressionmfc.expression.simple.SimpleExpression;
 import top.focess.expressionmfc.expression.simple.constant.SimpleConstable;
 
 public class UnknownArgument extends Argument {
@@ -81,7 +78,7 @@ public class UnknownArgument extends Argument {
                 }
 
                 @Override
-                public boolean isZero(){
+                public boolean isZero() {
                     return false;
                 }
             };
@@ -95,7 +92,7 @@ public class UnknownArgument extends Argument {
     private boolean unknown;
 
     public UnknownArgument(String name) {
-        super(name,NULL_CONSTABLE);
+        super(name, NULL_CONSTABLE);
         this.unknown = true;
     }
 
@@ -105,18 +102,18 @@ public class UnknownArgument extends Argument {
     }
 
     @Override
+    public @NonNull Constable getValue() throws UnknownArgumentException {
+        if (this.unknown)
+            throw new UnknownArgumentException(this);
+        return super.getValue();
+    }
+
+    @Override
     public void setValue(@NonNull Constable value) {
         if (value == NULL_CONSTABLE)
             return;
         this.unknown = false;
         super.setValue(value);
-    }
-
-    @Override
-    public @NonNull Constable getValue() throws UnknownArgumentException {
-        if (this.unknown)
-            throw new UnknownArgumentException(this);
-        return super.getValue();
     }
 
     @Override

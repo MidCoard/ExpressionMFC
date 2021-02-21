@@ -63,10 +63,10 @@ public class SimpleConstantDouble extends SimpleConstant {
         if (range < 0 || range > 15)
             range = 0;
         if (range == 0)
-            return new SimpleConstantFraction(this,SimpleConstantLong.ONE);
+            return new SimpleConstantFraction(this, SimpleConstantLong.ONE);
         else {
-            double v = MathHelper.pow(10,range);
-            return new SimpleConstantFraction(new SimpleConstantDouble(this.value * v),new SimpleConstantLong((long) v));
+            double v = MathHelper.pow(10, range);
+            return new SimpleConstantFraction(new SimpleConstantDouble(this.value * v), new SimpleConstantLong((long) v));
         }
     }
 

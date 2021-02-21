@@ -1,8 +1,6 @@
 package top.focess.expressionmfc.expression.simple.constant;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import top.focess.expressionmfc.exception.DivideByZeroException;
-import top.focess.expressionmfc.expression.Simplifiable;
 
 public class SimpleConstantLong extends SimpleConstant {
 
@@ -40,7 +38,7 @@ public class SimpleConstantLong extends SimpleConstant {
     public @NonNull SimpleConstant plus(SimpleConstant simpleConstant) {
         if (simpleConstant instanceof SimpleConstantDouble)
             return new SimpleConstantDouble(this.value + simpleConstant.getValue().doubleValue());
-         else
+        else
             return new SimpleConstantLong(this.value + simpleConstant.getValue().longValue());
     }
 
@@ -72,7 +70,7 @@ public class SimpleConstantLong extends SimpleConstant {
 
     @NonNull
     public SimpleConstantFraction toFraction() {
-        return new SimpleConstantFraction(this,SimpleConstantLong.ONE);
+        return new SimpleConstantFraction(this, SimpleConstantLong.ONE);
     }
 
     @Override

@@ -1,10 +1,24 @@
 package top.focess.expressionmfc.expression.simple.constant;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import top.focess.expressionmfc.argument.Argument;
 import top.focess.expressionmfc.expression.Simplifiable;
 import top.focess.expressionmfc.expression.simple.SimpleExpression;
 
+import java.util.Collections;
+import java.util.List;
+
 public abstract class SimpleConstant extends SimpleExpression implements SimpleConstable {
+
+    @Override
+    public @NonNull SimpleConstant removeSameArguments(List<Argument> arguments) {
+        return this.clone();
+    }
+
+    @Override
+    public @NonNull List<Argument> getSameArguments() {
+        return Collections.singletonList(Argument.NULL_ARGUMENT);
+    }
 
     @Override
     @NonNull
@@ -44,12 +58,12 @@ public abstract class SimpleConstant extends SimpleExpression implements SimpleC
 
     @Override
     public @NonNull SimpleConstable plus(SimpleConstable simpleConstable) {
-        return plus((SimpleConstant)simpleConstable);
+        return plus((SimpleConstant) simpleConstable);
     }
 
     @Override
     public @NonNull SimpleExpression plus(SimpleExpression simpleExpression) {
-        return plus((SimpleConstant)simpleExpression);
+        return plus((SimpleConstant) simpleExpression);
     }
 
     @Override

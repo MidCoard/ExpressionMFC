@@ -1,4 +1,10 @@
 package top.focess.expressionmfc.exception;
 
-public class DivideByZeroException extends Exception {
+import top.focess.expressionmfc.expression.IExpression;
+
+public class DivideByZeroException extends ExpressionException {
+
+    public DivideByZeroException(IExpression expression) {
+        super("The value of Expression \"" + expression + "\" is zero.");
+    }
 }

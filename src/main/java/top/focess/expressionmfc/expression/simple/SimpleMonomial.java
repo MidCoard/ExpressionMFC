@@ -19,7 +19,7 @@ public class SimpleMonomial extends SimpleExpression implements SimpleMonomialab
     private final Argument first;
     private final List<Argument> arguments;
 
-    public SimpleMonomial(SimpleConstable k,Argument first, Argument... arguments) {
+    public SimpleMonomial(SimpleConstable k, Argument first, Argument... arguments) {
         this.k = k;
         this.first = first;
         this.arguments = Lists.newArrayList(arguments);
@@ -52,12 +52,31 @@ public class SimpleMonomial extends SimpleExpression implements SimpleMonomialab
 
     @Override
     public @NonNull SimpleMonomial reverse() {
-        return new SimpleMonomial(this.getK().reverse(),this.first,this.arguments.toArray(new Argument[0]));
+        return new SimpleMonomial(this.getK().reverse(), this.first, this.arguments.toArray(new Argument[0]));
+    }
+
+    @Override
+    public @NonNull List<Argument> getSameArguments() {
+        return this.getArguments();
+    }
+
+    @Override
+    @NonNull
+    public SimpleMonomial removeSameArguments(List<Argument> arguments) {
+        List<Argument> a = Lists.newArrayList(this.getArguments());
+        a.removeAll(arguments);
+        if (a.size() == 0)
+            return new SimpleMonomial(this.getK(), Argument.NULL_ARGUMENT);
+        else {
+            Argument first = a.get(a.size() - 1);
+            a.remove(a.size() - 1);
+            return new SimpleMonomial(this.getK(), first, a.toArray(new Argument[0]));
+        }
     }
 
     @Override
     public @NonNull SimpleMonomial clone() {
-        return new SimpleMonomial(this.getK(),this.first,this.getArguments().toArray(new Argument[0]));
+        return new SimpleMonomial(this.getK(), this.first, this.getArguments().toArray(new Argument[0]));
     }
 
     @Override
@@ -80,20 +99,20 @@ public class SimpleMonomial extends SimpleExpression implements SimpleMonomialab
             array[array.length - 1] = this;
             return new SimplePolynomial(array);
         } else
-            return new SimplePolynomial(this,( (SimpleMonomialable) simpleExpression).reverse());
+            return new SimplePolynomial(this, ((SimpleMonomialable) simpleExpression).reverse());
     }
 
     @Override
     public @NonNull SimpleExpression multiply(SimpleExpression simpleExpression) {
         if (simpleExpression instanceof SimplePolynomial) {
             SimpleMonomialable[] monomialables = ((SimplePolynomial) simpleExpression).getMonomials().toArray(new SimpleMonomialable[0]);
-            for (int i = 0;i<monomialables.length;i++)
-                monomialables[i] = (SimpleMonomialable) Operator.MULTIPLY.operate(monomialables[i],this);
+            for (int i = 0; i < monomialables.length; i++)
+                monomialables[i] = (SimpleMonomialable) Operator.MULTIPLY.operate(monomialables[i], this);
             return new SimplePolynomial(monomialables);
         } else {
             List<Argument> arguments = Lists.newArrayList(this.arguments);
-            arguments.addAll(((SimpleMonomialable)simpleExpression).getArguments());
-            return new SimpleMonomial(Operator.MULTIPLY.operate(this.getK(),((SimpleMonomialable)simpleExpression).getK()),this.first,arguments.toArray(new Argument[0]));
+            arguments.addAll(((SimpleMonomialable) simpleExpression).getArguments());
+            return new SimpleMonomial(Operator.MULTIPLY.operate(this.getK(), ((SimpleMonomialable) simpleExpression).getK()), this.first, arguments.toArray(new Argument[0]));
         }
     }
 
@@ -115,9 +134,9 @@ public class SimpleMonomial extends SimpleExpression implements SimpleMonomialab
     @Override
     public @NonNull Constable value() throws UnknownArgumentException {
         ConstantExpression constantExpression = new ConstantExpression(this.getK());
-        constantExpression.append(Operator.MULTIPLY,this.first.getValue());
-        for (Argument argument:this.arguments)
-            constantExpression.append(Operator.MULTIPLY,argument.getValue());
+        constantExpression.append(Operator.MULTIPLY, this.first.getValue());
+        for (Argument argument : this.arguments)
+            constantExpression.append(Operator.MULTIPLY, argument.getValue());
         return constantExpression;
     }
 
@@ -126,7 +145,7 @@ public class SimpleMonomial extends SimpleExpression implements SimpleMonomialab
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(this.getK().toString());
-        for (Argument argument:this.getArguments()) {
+        for (Argument argument : this.getArguments()) {
             if (argument != Argument.NULL_ARGUMENT) {
                 stringBuilder.append(" * ");
                 stringBuilder.append(argument.toString());

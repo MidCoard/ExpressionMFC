@@ -11,12 +11,16 @@ import java.util.List;
 public interface SimpleMonomialable extends Monomialable, Simplifiable {
 
     @NonNull
+    SimpleMonomialable removeSameArguments(List<Argument> arguments);
+
+    @NonNull
     SimpleMonomialable reverse();
 
     @NonNull SimpleConstable getK();
 
     @NonNull
     Argument getFirst();
+
     @NonNull
     List<Argument> getLast();
 }

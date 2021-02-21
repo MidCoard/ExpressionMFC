@@ -5,7 +5,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import top.focess.expressionmfc.argument.Argument;
 import top.focess.expressionmfc.exception.UnknownArgumentException;
 import top.focess.expressionmfc.expression.Constable;
-import top.focess.expressionmfc.expression.Monomialable;
 import top.focess.expressionmfc.expression.Simplifiable;
 import top.focess.expressionmfc.expression.multi.ConstantExpression;
 import top.focess.expressionmfc.expression.simple.constant.SimpleConstable;
@@ -26,7 +25,7 @@ public class SimplePolynomial extends SimpleExpression {
             this.monomials = Collections.singletonList(SimpleConstantLong.ZERO);
         else {
             SimilarHashMap similarHashMap = new SimilarHashMap();
-            for (SimpleMonomialable simpleMonomialable:monomials)
+            for (SimpleMonomialable simpleMonomialable : monomials)
                 similarHashMap.add(simpleMonomialable);
             this.monomials = similarHashMap.get();
         }
@@ -35,9 +34,10 @@ public class SimplePolynomial extends SimpleExpression {
 
     @Override
     public @NonNull Constable value() throws UnknownArgumentException {
-        ConstantExpression constantExpression = new ConstantExpression();
-        for (Monomialable monomialable:this.monomials)
-            constantExpression.append(monomialable.value());
+        ConstantExpression constantExpression = new ConstantExpression(false);
+        constantExpression.addExpression(this.monomials.get(0).value());
+        for (int i = 1; i < this.monomials.size(); i++)
+            constantExpression.append(this.monomials.get(i).value());
         return constantExpression;
     }
 
@@ -81,14 +81,14 @@ public class SimplePolynomial extends SimpleExpression {
             SimpleMonomialable[] monomialables2 = this.getMonomials().toArray(new SimpleMonomialable[0]);
             SimpleMonomialable[] temp = new SimpleMonomialable[monomialables.length * monomialables2.length];
             int pos = 0;
-            for (SimpleMonomialable a:monomialables)
-                for (SimpleMonomialable b:monomialables2)
-                    temp[pos++] = (SimpleMonomialable) Operator.MULTIPLY.operate(a,b);
+            for (SimpleMonomialable a : monomialables)
+                for (SimpleMonomialable b : monomialables2)
+                    temp[pos++] = (SimpleMonomialable) Operator.MULTIPLY.operate(a, b);
             return new SimplePolynomial(temp);
         } else {
             SimpleMonomialable[] monomialables = this.getMonomials().toArray(new SimpleMonomialable[0]);
-            for (int i = 0;i<monomialables.length;i++)
-                monomialables[i] = (SimpleMonomialable) Operator.MULTIPLY.operate(monomialables[i],simpleExpression);
+            for (int i = 0; i < monomialables.length; i++)
+                monomialables[i] = (SimpleMonomialable) Operator.MULTIPLY.operate(monomialables[i], simpleExpression);
             return new SimplePolynomial(monomialables);
         }
     }
@@ -119,6 +119,37 @@ public class SimplePolynomial extends SimpleExpression {
     }
 
     @Override
+    public @NonNull List<Argument> getSameArguments() {
+        List<Argument> ret = Lists.newArrayList();
+        int size = Integer.MAX_VALUE;
+        List<Argument> arguments = null;
+        for (SimpleMonomialable simpleMonomialable : this.monomials)
+            if (simpleMonomialable.getArguments().size() < size) {
+                size = simpleMonomialable.getArguments().size();
+                arguments = simpleMonomialable.getArguments();
+            }
+        for (Argument argument : Objects.requireNonNull(arguments)) {
+            boolean flag = false;
+            for (SimpleMonomialable simpleMonomialable : this.monomials)
+                if (!simpleMonomialable.getArguments().contains(argument)) {
+                    flag = true;
+                    break;
+                }
+            if (!flag)
+                ret.add(argument);
+        }
+        return ret;
+    }
+
+    @Override
+    public @NonNull SimpleExpression removeSameArguments(List<Argument> arguments) {
+        SimpleMonomialable[] simpleMonomialables = this.monomials.toArray(new SimpleMonomialable[0]);
+        for (int i = 0; i < simpleMonomialables.length; i++)
+            simpleMonomialables[i] = simpleMonomialables[i].removeSameArguments(arguments);
+        return new SimplePolynomial(simpleMonomialables);
+    }
+
+    @Override
     public boolean isNeedBracket() {
         return this.monomials.size() != 1;
     }
@@ -127,7 +158,7 @@ public class SimplePolynomial extends SimpleExpression {
     @NonNull
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0;i<this.monomials.size() - 1;i++) {
+        for (int i = 0; i < this.monomials.size() - 1; i++) {
             stringBuilder.append(this.monomials.get(i));
             stringBuilder.append(" + ");
         }
@@ -158,11 +189,11 @@ public class SimplePolynomial extends SimpleExpression {
         }
     }
 
-    private static class SimilarHashMap extends HashMap<SimilarSimpleMonomialable,SimpleConstable> {
+    private static class SimilarHashMap extends HashMap<SimilarSimpleMonomialable, SimpleConstable> {
 
         public void add(SimpleMonomialable monomialable) {
             SimilarSimpleMonomialable similarMonomialable = new SimilarSimpleMonomialable(monomialable);
-            this.compute(similarMonomialable,(key,value)->{
+            this.compute(similarMonomialable, (key, value) -> {
                 if (value == null)
                     return similarMonomialable.getK();
                 else return value.plus(similarMonomialable.getK());
@@ -171,10 +202,10 @@ public class SimplePolynomial extends SimpleExpression {
 
         public List<SimpleMonomialable> get() {
             List<SimpleMonomialable> monomialables = Lists.newArrayList();
-            for (SimilarSimpleMonomialable similarMonomialable:this.keySet()) {
+            for (SimilarSimpleMonomialable similarMonomialable : this.keySet()) {
                 SimpleConstable constable;
                 if (!(constable = this.get(similarMonomialable)).isZero())
-                    monomialables.add(new SimpleMonomial(constable,similarMonomialable.monomialable.getFirst(),similarMonomialable.monomialable.getLast().toArray(new Argument[0])));
+                    monomialables.add(new SimpleMonomial(constable, similarMonomialable.monomialable.getFirst(), similarMonomialable.monomialable.getLast().toArray(new Argument[0])));
             }
             if (monomialables.size() == 0)
                 monomialables.add(SimpleConstantLong.ZERO);

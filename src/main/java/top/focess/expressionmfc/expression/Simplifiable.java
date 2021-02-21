@@ -1,7 +1,6 @@
 package top.focess.expressionmfc.expression;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import top.focess.expressionmfc.expression.simple.SimpleExpression;
 
 public interface Simplifiable extends IExpression {
 

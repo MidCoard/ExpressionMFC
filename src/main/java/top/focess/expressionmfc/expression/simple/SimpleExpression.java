@@ -1,9 +1,12 @@
 package top.focess.expressionmfc.expression.simple;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import top.focess.expressionmfc.argument.Argument;
 import top.focess.expressionmfc.expression.SelfExpression;
 import top.focess.expressionmfc.expression.Simplifiable;
 import top.focess.expressionmfc.operator.Operator;
+
+import java.util.List;
 
 public abstract class SimpleExpression extends SelfExpression implements Simplifiable {
 
@@ -46,7 +49,7 @@ public abstract class SimpleExpression extends SelfExpression implements Simplif
             return new SimpleFraction(this, (SimpleExpression) simplifiable);
         else {
             if (simplifiable instanceof SimpleIFraction) {
-                return new SimpleFraction(Operator.MULTIPLY.operate(this,((SimpleIFraction) simplifiable).getDenominator()),((SimpleIFraction) simplifiable).getNumerator() );
+                return new SimpleFraction(Operator.MULTIPLY.operate(this, ((SimpleIFraction) simplifiable).getDenominator()), ((SimpleIFraction) simplifiable).getNumerator());
             }
         }
         return null;
@@ -55,4 +58,9 @@ public abstract class SimpleExpression extends SelfExpression implements Simplif
     @NonNull
     public abstract SimpleExpression reverse();
 
+    @NonNull
+    public abstract List<Argument> getSameArguments();
+
+    @NonNull
+    public abstract SimpleExpression removeSameArguments(List<Argument> arguments);
 }

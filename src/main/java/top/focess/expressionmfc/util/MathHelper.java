@@ -7,6 +7,6 @@ public class MathHelper {
     }
 
     public static double pow(double v, double pow) {
-        return Math.pow(v,pow);
+        return Math.pow(v, pow);
     }
 }

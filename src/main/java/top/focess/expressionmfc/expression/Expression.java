@@ -5,7 +5,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
 
-public abstract class Expression implements IExpression{
+public abstract class Expression implements IExpression {
 
     protected List<IExpression> expressions;
 
