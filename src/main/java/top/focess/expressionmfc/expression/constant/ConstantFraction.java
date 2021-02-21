@@ -29,10 +29,13 @@ public class ConstantFraction extends Expression implements Constable, IFraction
     }
 
     @Override
-    public boolean isZero() throws DivideByZeroException {
-        if (this.denominator.isZero())
-            throw new DivideByZeroException();
+    public boolean isZero(){
         return this.numerator.isZero();
+    }
+
+    @Override
+    public @NonNull ConstantFraction reverse() {
+        return new ConstantFraction(this.getNumerator().reverse(),this.getDenominator());
     }
 
     @Override
@@ -54,5 +57,27 @@ public class ConstantFraction extends Expression implements Constable, IFraction
     @Override
     public @NonNull Constable getDenominator() {
         return this.denominator;
+    }
+
+    @Override
+    @NonNull
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (this.getNumerator().isNeedBracket()) {
+            stringBuilder.append('(');
+        }
+        stringBuilder.append(this.getNumerator().toString());
+        if (this.getNumerator().isNeedBracket()) {
+            stringBuilder.append(')');
+        }
+        stringBuilder.append('/');
+        if (this.getDenominator().isNeedBracket()) {
+            stringBuilder.append('(');
+        }
+        stringBuilder.append(this.getDenominator().toString());
+        if (this.getDenominator().isNeedBracket()) {
+            stringBuilder.append(')');
+        }
+        return stringBuilder.toString();
     }
 }

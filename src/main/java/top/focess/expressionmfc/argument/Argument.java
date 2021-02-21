@@ -12,9 +12,8 @@ import top.focess.expressionmfc.operator.Operator;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
-public class Argument extends SimpleExpression implements SimpleMonomialable {
+public class Argument extends SimpleExpression implements SimpleMonomialable, Comparable<Argument> {
 
     public static final Argument NULL_ARGUMENT = new Argument("", SimpleConstantLong.ONE);
     private final String name;
@@ -93,20 +92,22 @@ public class Argument extends SimpleExpression implements SimpleMonomialable {
 
     @Override
     public @NonNull Simplifiable divided(Simplifiable simplifiable) {
-        if (simplifiable instanceof SimpleExpression)
-            return new SimpleFraction(new SimpleMonomial(SimpleConstantLong.ONE, this), (SimpleExpression) simplifiable);
-        else {
-            if (simplifiable instanceof SimpleIFraction) {
-                return new SimpleFraction(Operator.MULTIPLY.operate(new SimpleMonomial(SimpleConstantLong.ONE, this), ((SimpleIFraction) simplifiable).getDenominator()), ((SimpleIFraction) simplifiable).getNumerator());
-            }
-            //todo
-        }
-        return null;
+        return new SimpleMonomial(SimpleConstantLong.ONE, this).divided(simplifiable);
     }
 
     @Override
     public @NonNull SimpleConstable getK() {
         return SimpleConstantLong.ONE;
+    }
+
+    @Override
+    public @NonNull Argument getFirst() {
+        return this;
+    }
+
+    @Override
+    public @NonNull List<Argument> getLast() {
+        return Lists.newArrayList();
     }
 
     @Override
@@ -117,5 +118,16 @@ public class Argument extends SimpleExpression implements SimpleMonomialable {
     @Override
     public @NonNull SimpleMonomial reverse() {
         return new SimpleMonomial(SimpleConstantLong.ONE.reverse(), this);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return this.getName();
+    }
+
+    @Override
+    public int compareTo(Argument o) {
+        return this.getName().compareTo(o.getName());
     }
 }

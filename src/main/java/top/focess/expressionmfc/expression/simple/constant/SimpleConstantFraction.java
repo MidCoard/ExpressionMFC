@@ -2,7 +2,6 @@ package top.focess.expressionmfc.expression.simple.constant;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import top.focess.expressionmfc.exception.DivideByZeroException;
-import top.focess.expressionmfc.expression.*;
 import top.focess.expressionmfc.expression.simple.SimpleExpression;
 import top.focess.expressionmfc.expression.simple.SimpleFraction;
 import top.focess.expressionmfc.operator.Operator;
@@ -28,9 +27,7 @@ public class SimpleConstantFraction extends SimpleFraction implements SimpleCons
     }
 
     @Override
-    public boolean isZero() throws DivideByZeroException {
-        if (this.denominator.isZero())
-            throw new DivideByZeroException();
+    public boolean isZero() {
         return this.numerator.isZero();
     }
 

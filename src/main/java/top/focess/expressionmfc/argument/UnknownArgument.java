@@ -23,6 +23,11 @@ public class UnknownArgument extends Argument {
         }
 
         @Override
+        public @NonNull Constable reverse() {
+            return this;
+        }
+
+        @Override
         public @NonNull SimpleConstable simplify() {
             return new SimpleConstable() {
                 @Override
@@ -71,12 +76,12 @@ public class UnknownArgument extends Argument {
                 }
 
                 @Override
-                public double doubleValue() throws DivideByZeroException {
+                public double doubleValue() {
                     return 0;
                 }
 
                 @Override
-                public boolean isZero() throws DivideByZeroException {
+                public boolean isZero(){
                     return false;
                 }
             };

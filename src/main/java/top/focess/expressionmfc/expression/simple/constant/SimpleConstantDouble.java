@@ -1,15 +1,6 @@
 package top.focess.expressionmfc.expression.simple.constant;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import top.focess.expressionmfc.argument.Argument;
-import top.focess.expressionmfc.exception.DivideByZeroException;
-import top.focess.expressionmfc.expression.Constable;
-import top.focess.expressionmfc.expression.IExpression;
-import top.focess.expressionmfc.expression.Simplifiable;
-import top.focess.expressionmfc.expression.simple.SimpleExpression;
-import top.focess.expressionmfc.expression.simple.SimpleFraction;
-import top.focess.expressionmfc.expression.simple.SimpleIFraction;
-import top.focess.expressionmfc.operator.Operator;
 import top.focess.expressionmfc.util.MathHelper;
 
 public class SimpleConstantDouble extends SimpleConstant {
@@ -23,12 +14,12 @@ public class SimpleConstantDouble extends SimpleConstant {
     }
 
     @Override
-    public double doubleValue() throws DivideByZeroException {
+    public double doubleValue() {
         return this.value;
     }
 
     @Override
-    public boolean isZero() throws DivideByZeroException {
+    public boolean isZero() {
         return MathHelper.abs(this.value) < Double.MIN_NORMAL;
     }
 
@@ -82,5 +73,11 @@ public class SimpleConstantDouble extends SimpleConstant {
     @NonNull
     public SimpleConstantFraction toFraction() {
         return toFraction(0);
+    }
+
+    @Override
+    @NonNull
+    public String toString() {
+        return String.valueOf(this.value);
     }
 }

@@ -8,19 +8,29 @@ import top.focess.expressionmfc.expression.Constable;
 import top.focess.expressionmfc.expression.Monomialable;
 import top.focess.expressionmfc.expression.Simplifiable;
 import top.focess.expressionmfc.expression.multi.ConstantExpression;
+import top.focess.expressionmfc.expression.simple.constant.SimpleConstable;
 import top.focess.expressionmfc.expression.simple.constant.SimpleConstantLong;
 import top.focess.expressionmfc.operator.Operator;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class SimplePolynomial extends SimpleExpression {
 
     private final List<SimpleMonomialable> monomials;
 
     public SimplePolynomial(SimpleMonomialable... monomials) {
-        this.monomials = Lists.newArrayList(monomials);
-        if (this.monomials.size() == 0)
-            this.monomials.add(SimpleConstantLong.ZERO);
+        if (monomials.length == 0)
+            this.monomials = Collections.singletonList(SimpleConstantLong.ZERO);
+        else {
+            SimilarHashMap similarHashMap = new SimilarHashMap();
+            for (SimpleMonomialable simpleMonomialable:monomials)
+                similarHashMap.add(simpleMonomialable);
+            this.monomials = similarHashMap.get();
+        }
+
     }
 
     @Override
@@ -94,18 +104,6 @@ public class SimplePolynomial extends SimpleExpression {
     }
 
     @Override
-    public @NonNull Simplifiable divided(Simplifiable simplifiable) {
-        if (simplifiable instanceof SimpleExpression)
-            return new SimpleFraction(this, (SimpleExpression) simplifiable);
-        else {
-            if (simplifiable instanceof SimpleIFraction)
-                return new SimpleFraction(Operator.MULTIPLY.operate(this,((SimpleIFraction) simplifiable).getDenominator()),((SimpleIFraction) simplifiable).getNumerator() );
-            //todo
-        }
-        return null;
-    }
-
-    @Override
     public @NonNull Simplifiable multiply(Simplifiable simplifiable) {
         return multiply((SimpleExpression) simplifiable);
     }
@@ -120,4 +118,67 @@ public class SimplePolynomial extends SimpleExpression {
         return new SimplePolynomial(this.monomials.stream().map(SimpleMonomialable::reverse).toArray(SimpleMonomialable[]::new));
     }
 
+    @Override
+    public boolean isNeedBracket() {
+        return this.monomials.size() != 1;
+    }
+
+    @Override
+    @NonNull
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0;i<this.monomials.size() - 1;i++) {
+            stringBuilder.append(this.monomials.get(i));
+            stringBuilder.append(" + ");
+        }
+        stringBuilder.append(this.monomials.get(this.monomials.size() - 1));
+        return stringBuilder.toString();
+    }
+
+    private static class SimilarSimpleMonomialable {
+
+        private final SimpleMonomialable monomialable;
+
+        public SimilarSimpleMonomialable(SimpleMonomialable monomialable) {
+            this.monomialable = monomialable;
+        }
+
+        public SimpleConstable getK() {
+            return this.monomialable.getK();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return o instanceof SimilarSimpleMonomialable && ((SimilarSimpleMonomialable) o).monomialable.getArguments().equals(this.monomialable.getArguments());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(monomialable.getArguments());
+        }
+    }
+
+    private static class SimilarHashMap extends HashMap<SimilarSimpleMonomialable,SimpleConstable> {
+
+        public void add(SimpleMonomialable monomialable) {
+            SimilarSimpleMonomialable similarMonomialable = new SimilarSimpleMonomialable(monomialable);
+            this.compute(similarMonomialable,(key,value)->{
+                if (value == null)
+                    return similarMonomialable.getK();
+                else return value.plus(similarMonomialable.getK());
+            });
+        }
+
+        public List<SimpleMonomialable> get() {
+            List<SimpleMonomialable> monomialables = Lists.newArrayList();
+            for (SimilarSimpleMonomialable similarMonomialable:this.keySet()) {
+                SimpleConstable constable;
+                if (!(constable = this.get(similarMonomialable)).isZero())
+                    monomialables.add(new SimpleMonomial(constable,similarMonomialable.monomialable.getFirst(),similarMonomialable.monomialable.getLast().toArray(new Argument[0])));
+            }
+            if (monomialables.size() == 0)
+                monomialables.add(SimpleConstantLong.ZERO);
+            return monomialables;
+        }
+    }
 }

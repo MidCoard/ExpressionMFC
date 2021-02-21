@@ -89,4 +89,26 @@ public class SimpleFraction extends Expression implements SimpleIFraction {
     public @NonNull Constable value() throws UnknownArgumentException {
         return new ConstantFraction(this.getNumerator().value(), this.getDenominator().value());
     }
+
+    @Override
+    @NonNull
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+            if (this.getNumerator().isNeedBracket()) {
+                stringBuilder.append('(');
+            }
+        stringBuilder.append(this.getNumerator().toString());
+            if (this.getNumerator().isNeedBracket()) {
+                stringBuilder.append(')');
+            }
+        stringBuilder.append('/');
+            if (this.getDenominator().isNeedBracket()) {
+                stringBuilder.append('(');
+            }
+        stringBuilder.append(this.getDenominator().toString());
+            if (this.getDenominator().isNeedBracket()) {
+                stringBuilder.append(')');
+            }
+        return stringBuilder.toString();
+    }
 }

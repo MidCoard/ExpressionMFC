@@ -17,7 +17,7 @@ public class SimpleConstantLong extends SimpleConstant {
     }
 
     @Override
-    public double doubleValue() throws DivideByZeroException {
+    public double doubleValue() {
         return this.value;
     }
 
@@ -73,6 +73,12 @@ public class SimpleConstantLong extends SimpleConstant {
     @NonNull
     public SimpleConstantFraction toFraction() {
         return new SimpleConstantFraction(this,SimpleConstantLong.ONE);
+    }
+
+    @Override
+    @NonNull
+    public String toString() {
+        return String.valueOf(this.value);
     }
 
 }

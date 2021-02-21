@@ -72,10 +72,8 @@ public class ConstantExpression extends MultiExpression implements Constable {
     }
 
     @Override
-    public boolean isZero() throws DivideByZeroException {
-
-        //todo
-        return false;
+    public boolean isZero(){
+        return this.simplify().isZero();
     }
 
     @Override
@@ -96,4 +94,8 @@ public class ConstantExpression extends MultiExpression implements Constable {
         return (ConstantExpression) super.append(operator, expression);
     }
 
+    @Override
+    public @NonNull ConstantExpression reverse() {
+        return new ConstantExpression().append(Operator.MINUS,this);
+    }
 }

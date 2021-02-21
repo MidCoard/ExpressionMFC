@@ -24,6 +24,16 @@ public interface SimpleConstable extends SimpleMonomialable, Constable {
         return Lists.newArrayList(Argument.NULL_ARGUMENT);
     }
 
+    @Override
+    @NonNull default Argument getFirst() {
+        return Argument.NULL_ARGUMENT;
+    }
+
+    @Override
+    @NonNull default List<Argument> getLast() {
+        return Lists.newArrayList();
+    }
+
     @NonNull
     SimpleConstable clone();
 

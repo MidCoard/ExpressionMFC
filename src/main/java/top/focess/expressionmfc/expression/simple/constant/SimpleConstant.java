@@ -1,16 +1,8 @@
 package top.focess.expressionmfc.expression.simple.constant;
 
-import com.google.common.collect.Lists;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import top.focess.expressionmfc.argument.Argument;
-import top.focess.expressionmfc.expression.Monomialable;
 import top.focess.expressionmfc.expression.Simplifiable;
 import top.focess.expressionmfc.expression.simple.SimpleExpression;
-import top.focess.expressionmfc.expression.simple.SimpleFraction;
-import top.focess.expressionmfc.expression.simple.SimpleIFraction;
-import top.focess.expressionmfc.operator.Operator;
-
-import java.util.List;
 
 public abstract class SimpleConstant extends SimpleExpression implements SimpleConstable {
 
@@ -90,18 +82,8 @@ public abstract class SimpleConstant extends SimpleExpression implements SimpleC
         return multiply((SimpleConstant) simplifiable);
     }
 
-    @Override
-    public @NonNull Simplifiable divided(Simplifiable simplifiable) {
-        if (simplifiable instanceof SimpleExpression)
-            return new SimpleFraction(this,(SimpleExpression) simplifiable);
-        else {
-            if (simplifiable instanceof SimpleIFraction)
-                return new SimpleFraction(Operator.MULTIPLY.operate(this,((SimpleIFraction) simplifiable).getDenominator()),((SimpleIFraction) simplifiable).getNumerator());
-            //todo
-        }
-        return null;
-    }
-
     @NonNull
     public abstract Number getValue();
+
+
 }

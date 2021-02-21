@@ -4,13 +4,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import top.focess.expressionmfc.exception.UnknownArgumentException;
-import top.focess.expressionmfc.expression.Constable;
-import top.focess.expressionmfc.expression.Expression;
-import top.focess.expressionmfc.expression.IExpression;
-import top.focess.expressionmfc.expression.Simplifiable;
+import top.focess.expressionmfc.expression.*;
 import top.focess.expressionmfc.expression.simple.constant.SimpleConstantLong;
 import top.focess.expressionmfc.operator.Operator;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -77,6 +75,11 @@ public class MultiExpression extends Expression implements Iterable<MultiExpress
     }
 
     @Override
+    public @NonNull MultiExpression reverse() {
+        return new MultiExpression().append(Operator.MINUS,this);
+    }
+
+    @Override
     @NonNull
     public MultiExpression clone() {
         return new MultiExpression(this.expressions, this.operatorHelpers);
@@ -98,6 +101,11 @@ public class MultiExpression extends Expression implements Iterable<MultiExpress
     @NonNull
     public Iterator<OperatorHelper> iterator() {
         return Sets.newTreeSet(this.operatorHelpers).iterator();
+    }
+
+    @Override
+    public boolean isNeedBracket() {
+        return operatorHelpers.stream().anyMatch(operatorHelper -> operatorHelper.getOperator() == Operator.PLUS);
     }
 
     public static class OperatorHelper implements Comparable<OperatorHelper>{
@@ -129,5 +137,31 @@ public class MultiExpression extends Expression implements Iterable<MultiExpress
         public Operator getOperator() {
             return this.operator;
         }
+    }
+
+    @Override
+    @NonNull
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (this.expressions.get(0).isNeedBracket()) {
+            stringBuilder.append('(');
+        }
+        stringBuilder.append(this.expressions.get(0).toString());
+        if (this.expressions.get(0).isNeedBracket()) {
+            stringBuilder.append(')');
+        }
+        for (int i = 1;i<this.expressions.size();i++) {
+            stringBuilder.append(' ');
+            stringBuilder.append(this.operatorHelpers.get(i - 1).getOperator().getName());
+            stringBuilder.append(' ');
+            if (this.expressions.get(i).isNeedBracket()) {
+                stringBuilder.append('(');
+            }
+            stringBuilder.append(this.expressions.get(i).toString());
+            if (this.expressions.get(i).isNeedBracket()) {
+                stringBuilder.append(')');
+            }
+        }
+        return stringBuilder.toString();
     }
 }

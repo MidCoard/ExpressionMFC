@@ -1,20 +1,16 @@
 package top.focess.expressionmfc.expression.simple;
 
 import com.google.common.collect.Lists;
-import com.sun.org.apache.xpath.internal.Arg;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.units.qual.A;
-import org.checkerframework.checker.units.qual.C;
 import top.focess.expressionmfc.argument.Argument;
 import top.focess.expressionmfc.exception.UnknownArgumentException;
 import top.focess.expressionmfc.expression.Constable;
-import top.focess.expressionmfc.expression.IExpression;
 import top.focess.expressionmfc.expression.Simplifiable;
 import top.focess.expressionmfc.expression.multi.ConstantExpression;
 import top.focess.expressionmfc.expression.simple.constant.SimpleConstable;
-import top.focess.expressionmfc.expression.simple.constant.SimpleConstant;
 import top.focess.expressionmfc.operator.Operator;
 
+import java.util.Collections;
 import java.util.List;
 
 public class SimpleMonomial extends SimpleExpression implements SimpleMonomialable {
@@ -29,6 +25,16 @@ public class SimpleMonomial extends SimpleExpression implements SimpleMonomialab
         this.arguments = Lists.newArrayList(arguments);
     }
 
+    @NonNull
+    public Argument getFirst() {
+        return this.first;
+    }
+
+    @NonNull
+    public List<Argument> getLast() {
+        return this.arguments;
+    }
+
     @Override
     @NonNull
     public SimpleConstable getK() {
@@ -40,12 +46,13 @@ public class SimpleMonomial extends SimpleExpression implements SimpleMonomialab
     public List<Argument> getArguments() {
         List<Argument> arguments = Lists.newArrayList(this.first);
         arguments.addAll(this.arguments);
+        Collections.sort(arguments);
         return arguments;
     }
 
     @Override
     public @NonNull SimpleMonomial reverse() {
-        return new SimpleMonomial(this.getK().reverse(),this.first,this.getArguments().toArray(new Argument[0]));
+        return new SimpleMonomial(this.getK().reverse(),this.first,this.arguments.toArray(new Argument[0]));
     }
 
     @Override
@@ -101,18 +108,6 @@ public class SimpleMonomial extends SimpleExpression implements SimpleMonomialab
     }
 
     @Override
-    public @NonNull Simplifiable divided(Simplifiable simplifiable) {
-        if (simplifiable instanceof SimpleExpression)
-            return new SimpleFraction(this, (SimpleExpression) simplifiable);
-        else {
-            if (simplifiable instanceof SimpleIFraction)
-                return new SimpleFraction(Operator.MULTIPLY.operate(this,((SimpleIFraction) simplifiable).getDenominator()),((SimpleIFraction) simplifiable).getNumerator() );
-            //todo
-        }
-        return null;
-    }
-
-    @Override
     public @NonNull Simplifiable multiply(Simplifiable simplifiable) {
         return multiply((SimpleExpression) simplifiable);
     }
@@ -124,5 +119,19 @@ public class SimpleMonomial extends SimpleExpression implements SimpleMonomialab
         for (Argument argument:this.arguments)
             constantExpression.append(Operator.MULTIPLY,argument.getValue());
         return constantExpression;
+    }
+
+    @Override
+    @NonNull
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(this.getK().toString());
+        for (Argument argument:this.getArguments()) {
+            if (argument != Argument.NULL_ARGUMENT) {
+                stringBuilder.append(" * ");
+                stringBuilder.append(argument.toString());
+            }
+        }
+        return stringBuilder.toString();
     }
 }
