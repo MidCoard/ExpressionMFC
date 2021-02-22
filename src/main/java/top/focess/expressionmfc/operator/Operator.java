@@ -2,6 +2,7 @@ package top.focess.expressionmfc.operator;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import top.focess.expressionmfc.expression.Constable;
+import top.focess.expressionmfc.expression.IExpression;
 import top.focess.expressionmfc.expression.Simplifiable;
 import top.focess.expressionmfc.expression.simple.SimpleExpression;
 import top.focess.expressionmfc.expression.simple.constant.SimpleConstable;
@@ -41,6 +42,22 @@ public enum Operator {
 
     public int getPriority() {
         return priority;
+    }
+
+    @NonNull
+    public IExpression operate(IExpression a,IExpression b) {
+        switch (this) {
+            case PLUS:
+                return a.plus(b);
+            case MINUS:
+                return a.minus(b);
+            case DIVIDED:
+                return a.divided(b);
+            case MULTIPLY:
+                return a.multiply(b);
+            default:
+                return null;
+        }
     }
 
     @NonNull

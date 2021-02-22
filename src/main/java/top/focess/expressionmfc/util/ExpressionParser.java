@@ -2,7 +2,7 @@ package top.focess.expressionmfc.util;
 
 import com.google.common.collect.Lists;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import top.focess.expressionmfc.argument.UnknownArgument;
+import top.focess.expressionmfc.argument.Argument;
 import top.focess.expressionmfc.exception.InvalidExpressionException;
 import top.focess.expressionmfc.expression.IExpression;
 import top.focess.expressionmfc.expression.multi.MultiExpression;
@@ -15,7 +15,7 @@ import java.util.Stack;
 public class ExpressionParser {
 
     private final String expressionStr;
-    private final List<UnknownArgument> arguments;
+    private final List<Argument> arguments;
     private MultiExpression expression;
 
     public ExpressionParser(String expression) throws InvalidExpressionException {
@@ -58,12 +58,12 @@ public class ExpressionParser {
     }
 
     @NonNull
-    public List<UnknownArgument> getArguments() {
+    public List<Argument> getArguments() {
         return arguments;
     }
 
-    public UnknownArgument getArgument(String name) {
-        for (UnknownArgument argument : this.arguments)
+    public Argument getArgument(String name) {
+        for (Argument argument : this.arguments)
             if (argument.getName().equals(name))
                 return argument;
         return null;
@@ -132,11 +132,11 @@ public class ExpressionParser {
             return false;
         }
 
-        private UnknownArgument getOrDefault(String name) {
-            for (UnknownArgument unknownArgument : ExpressionParser.this.arguments)
+        private Argument getOrDefault(String name) {
+            for (Argument unknownArgument : ExpressionParser.this.arguments)
                 if (unknownArgument.getName().equals(name))
                     return unknownArgument;
-            UnknownArgument unknownArgument = new UnknownArgument(name);
+            Argument unknownArgument = Argument.getArgument(name);
             ExpressionParser.this.arguments.add(unknownArgument);
             return unknownArgument;
         }
@@ -145,7 +145,7 @@ public class ExpressionParser {
             if (!this.argument && !this.number)
                 return null;
             else if (this.argument) {
-                UnknownArgument unknownArgument = getOrDefault(this.stringBuilder.toString());
+                Argument unknownArgument = getOrDefault(this.stringBuilder.toString());
                 this.reset();
                 return unknownArgument;
             } else {

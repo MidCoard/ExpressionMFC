@@ -1,36 +1,35 @@
 package top.focess.expressionmfc.expression.constant;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import top.focess.expressionmfc.exception.DivideByZeroException;
+import top.focess.expressionmfc.exception.DividedByZeroException;
 import top.focess.expressionmfc.expression.Constable;
 import top.focess.expressionmfc.expression.Expression;
-import top.focess.expressionmfc.expression.IFraction;
+import top.focess.expressionmfc.expression.Simplifiable;
+import top.focess.expressionmfc.expression.complex.Fraction;
 import top.focess.expressionmfc.expression.simple.constant.SimpleConstable;
 import top.focess.expressionmfc.operator.Operator;
 
 import java.util.Objects;
 
-public class ConstantFraction extends Expression implements Constable, IFraction {
+public class ConstantFraction extends Fraction implements Constable {
 
-    private final Constable numerator;
-    private final Constable denominator;
 
     public ConstantFraction(Constable numerator, Constable denominator) {
-        this.numerator = numerator;
-        this.denominator = denominator;
+        super(numerator,denominator);
     }
 
     @Override
-    public double doubleValue() throws DivideByZeroException {
-        if (this.denominator.isZero())
-            throw new DivideByZeroException(this.denominator);
-        return this.numerator.doubleValue() / this.denominator.doubleValue();
+    public double doubleValue() throws DividedByZeroException {
+        if (this.getDenominator().isZero())
+            throw new DividedByZeroException(this.getDenominator());
+        return this.getNumerator().doubleValue() / this.getNumerator().doubleValue();
     }
 
     @Override
     public boolean isZero() {
-        return this.numerator.isZero();
+        return this.getNumerator().isZero();
     }
+
 
     @Override
     public @NonNull ConstantFraction reverse() {
@@ -49,34 +48,22 @@ public class ConstantFraction extends Expression implements Constable, IFraction
     }
 
     @Override
+    public @NonNull Simplifiable simpleValue() {
+        return this.simplify().simpleValue();
+    }
+
+    @Override
     public @NonNull Constable getNumerator() {
-        return this.numerator;
+        return (Constable) super.getNumerator();
     }
 
     @Override
     public @NonNull Constable getDenominator() {
-        return this.denominator;
+        return (Constable) super.getDenominator();
     }
 
     @Override
-    @NonNull
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (this.getNumerator().isNeedBracket()) {
-            stringBuilder.append('(');
-        }
-        stringBuilder.append(this.getNumerator().toString());
-        if (this.getNumerator().isNeedBracket()) {
-            stringBuilder.append(')');
-        }
-        stringBuilder.append('/');
-        if (this.getDenominator().isNeedBracket()) {
-            stringBuilder.append('(');
-        }
-        stringBuilder.append(this.getDenominator().toString());
-        if (this.getDenominator().isNeedBracket()) {
-            stringBuilder.append(')');
-        }
-        return stringBuilder.toString();
+    public @NonNull Constable value() {
+        return this.clone();
     }
 }

@@ -2,9 +2,10 @@ package top.focess.expressionmfc.expression.multi;
 
 import com.google.common.collect.Lists;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import top.focess.expressionmfc.exception.DivideByZeroException;
+import top.focess.expressionmfc.exception.DividedByZeroException;
 import top.focess.expressionmfc.expression.Constable;
 import top.focess.expressionmfc.expression.IExpression;
+import top.focess.expressionmfc.expression.Simplifiable;
 import top.focess.expressionmfc.expression.simple.constant.SimpleConstable;
 import top.focess.expressionmfc.operator.Operator;
 
@@ -49,7 +50,12 @@ public class ConstantExpression extends MultiExpression implements Constable {
         return (SimpleConstable) super.simplify();
     }
 
-    private Double getOrDefault(int pos) throws DivideByZeroException {
+    @Override
+    public @NonNull Simplifiable simpleValue() {
+        return super.simpleValue();
+    }
+
+    private Double getOrDefault(int pos) throws DividedByZeroException {
         if (values[pos] == null)
             return ((Constable) this.expressions.get(pos)).doubleValue();
         else return values[pos];
@@ -68,7 +74,7 @@ public class ConstantExpression extends MultiExpression implements Constable {
     }
 
     @Override
-    public double doubleValue() throws DivideByZeroException {
+    public double doubleValue() throws DividedByZeroException {
         int first = -1;
         int last = -1;
         values = new Double[this.expressions.size()];

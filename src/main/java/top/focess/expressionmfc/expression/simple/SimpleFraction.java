@@ -7,21 +7,22 @@ import top.focess.expressionmfc.exception.UnknownArgumentException;
 import top.focess.expressionmfc.expression.Constable;
 import top.focess.expressionmfc.expression.Expression;
 import top.focess.expressionmfc.expression.Simplifiable;
+import top.focess.expressionmfc.expression.complex.Fraction;
 import top.focess.expressionmfc.expression.constant.ConstantFraction;
 import top.focess.expressionmfc.operator.Operator;
+import top.focess.expressionmfc.util.Pair;
 
 import java.util.List;
 
-public class SimpleFraction extends Expression implements SimpleIFraction {
+public class SimpleFraction extends Fraction implements Simplifiable {
 
-    private final SimpleExpression numerator;
-
-    private final SimpleExpression denominator;
+    private static Pair<SimpleExpression,SimpleExpression> simplify(SimpleExpression numerator,SimpleExpression denominator) {
+        List<Argument> arguments = getSameArguments(numerator.getSameArguments(), denominator.getSameArguments());
+        return Pair.of(numerator.removeSameArguments(arguments),denominator.removeSameArguments(arguments));
+    }
 
     public SimpleFraction(SimpleExpression numerator, SimpleExpression denominator) {
-        List<Argument> arguments = getSameArguments(numerator.getSameArguments(), denominator.getSameArguments());
-        this.numerator = numerator.removeSameArguments(arguments);
-        this.denominator = denominator.removeSameArguments(arguments);
+        super(simplify(numerator,denominator));
     }
 
     private static List<Argument> getSameArguments(List<Argument> a, List<Argument> b) {
@@ -34,12 +35,12 @@ public class SimpleFraction extends Expression implements SimpleIFraction {
 
     @Override
     public @NonNull SimpleExpression getNumerator() {
-        return this.numerator;
+        return (SimpleExpression) super.getNumerator();
     }
 
     @Override
     public @NonNull SimpleExpression getDenominator() {
-        return this.denominator;
+        return (SimpleExpression) super.getDenominator();
     }
 
     @Override
@@ -52,8 +53,8 @@ public class SimpleFraction extends Expression implements SimpleIFraction {
         if (simplifiable instanceof SimpleExpression)
             return new SimpleFraction(Operator.PLUS.operate(this.getNumerator(), Operator.MULTIPLY.operate(this.getDenominator(), (SimpleExpression) simplifiable)), this.getDenominator());
         else {
-            if (simplifiable instanceof SimpleIFraction)
-                return new SimpleFraction(Operator.PLUS.operate(Operator.MULTIPLY.operate(this.getNumerator(), ((SimpleIFraction) simplifiable).getDenominator()), Operator.MULTIPLY.operate(this.getDenominator(), ((SimpleIFraction) simplifiable).getNumerator())), Operator.MULTIPLY.operate(this.getDenominator(), ((SimpleIFraction) simplifiable).getDenominator()));
+            if (simplifiable instanceof SimpleFraction)
+                return new SimpleFraction(Operator.PLUS.operate(Operator.MULTIPLY.operate(this.getNumerator(), ((SimpleFraction) simplifiable).getDenominator()), Operator.MULTIPLY.operate(this.getDenominator(), ((SimpleFraction) simplifiable).getNumerator())), Operator.MULTIPLY.operate(this.getDenominator(), ((SimpleFraction) simplifiable).getDenominator()));
             //todo
         }
         return null;
@@ -64,8 +65,8 @@ public class SimpleFraction extends Expression implements SimpleIFraction {
         if (simplifiable instanceof SimpleExpression)
             return new SimpleFraction(Operator.MINUS.operate(this.getNumerator(), Operator.MULTIPLY.operate(this.getDenominator(), (SimpleExpression) simplifiable)), this.getDenominator());
         else {
-            if (simplifiable instanceof SimpleIFraction)
-                return new SimpleFraction(Operator.MINUS.operate(Operator.MULTIPLY.operate(this.getNumerator(), ((SimpleIFraction) simplifiable).getDenominator()), Operator.MULTIPLY.operate(this.getDenominator(), ((SimpleIFraction) simplifiable).getNumerator())), Operator.MULTIPLY.operate(this.getDenominator(), ((SimpleIFraction) simplifiable).getDenominator()));
+            if (simplifiable instanceof SimpleFraction)
+                return new SimpleFraction(Operator.MINUS.operate(Operator.MULTIPLY.operate(this.getNumerator(), ((SimpleFraction) simplifiable).getDenominator()), Operator.MULTIPLY.operate(this.getDenominator(), ((SimpleFraction) simplifiable).getNumerator())), Operator.MULTIPLY.operate(this.getDenominator(), ((SimpleFraction) simplifiable).getDenominator()));
             //todo
         }
         return null;
@@ -76,8 +77,8 @@ public class SimpleFraction extends Expression implements SimpleIFraction {
         if (simplifiable instanceof SimpleExpression)
             return new SimpleFraction(this.getNumerator(), Operator.MULTIPLY.operate(this.getDenominator(), (SimpleExpression) simplifiable));
         else {
-            if (simplifiable instanceof SimpleIFraction)
-                return new SimpleFraction(Operator.MULTIPLY.operate(this.getNumerator(), ((SimpleIFraction) simplifiable).getDenominator()), Operator.MULTIPLY.operate(this.getDenominator(), ((SimpleIFraction) simplifiable).getNumerator()));
+            if (simplifiable instanceof SimpleFraction)
+                return new SimpleFraction(Operator.MULTIPLY.operate(this.getNumerator(), ((SimpleFraction) simplifiable).getDenominator()), Operator.MULTIPLY.operate(this.getDenominator(), ((SimpleFraction) simplifiable).getNumerator()));
             //todo
         }
         return null;
@@ -88,42 +89,16 @@ public class SimpleFraction extends Expression implements SimpleIFraction {
         if (simplifiable instanceof SimpleExpression)
             return new SimpleFraction(Operator.MULTIPLY.operate(this.getNumerator(), (SimpleExpression) simplifiable), this.getDenominator());
         else {
-            if (simplifiable instanceof SimpleIFraction)
-                return new SimpleFraction(Operator.MULTIPLY.operate(this.getNumerator(), ((SimpleIFraction) simplifiable).getNumerator()), Operator.MULTIPLY.operate(this.getDenominator(), ((SimpleIFraction) simplifiable).getDenominator()));
+            if (simplifiable instanceof SimpleFraction)
+                return new SimpleFraction(Operator.MULTIPLY.operate(this.getNumerator(), ((SimpleFraction) simplifiable).getNumerator()), Operator.MULTIPLY.operate(this.getDenominator(), ((SimpleFraction) simplifiable).getDenominator()));
             //todo
         }
         return null;
     }
 
     @Override
-    public @NonNull Simplifiable reverse() {
+    public @NonNull SimpleFraction reverse() {
         return new SimpleFraction(this.getNumerator().reverse(), this.getDenominator());
     }
 
-    @Override
-    public @NonNull Constable value() throws UnknownArgumentException {
-        return new ConstantFraction(this.getNumerator().value(), this.getDenominator().value());
-    }
-
-    @Override
-    @NonNull
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (this.getNumerator().isNeedBracket()) {
-            stringBuilder.append('(');
-        }
-        stringBuilder.append(this.getNumerator().toString());
-        if (this.getNumerator().isNeedBracket()) {
-            stringBuilder.append(')');
-        }
-        stringBuilder.append('/');
-        if (this.getDenominator().isNeedBracket()) {
-            stringBuilder.append('(');
-        }
-        stringBuilder.append(this.getDenominator().toString());
-        if (this.getDenominator().isNeedBracket()) {
-            stringBuilder.append(')');
-        }
-        return stringBuilder.toString();
-    }
 }

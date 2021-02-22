@@ -15,8 +15,114 @@ import top.focess.expressionmfc.operator.Operator;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public class Argument extends SimpleExpression implements SimpleMonomialable, Comparable<Argument> {
+
+    private static final Object WEAK_OBJECT = new Object();
+
+    private static final Map<Argument,Object> arguments = new WeakHashMap<>();
+
+
+    private static final Constable NULL_CONSTABLE = new Constable() {
+        @Override
+        public double doubleValue() {
+            return 0;
+        }
+
+        @Override
+        public boolean isZero() {
+            return true;
+        }
+
+        @Override
+        public @NonNull Constable reverse() {
+            return this;
+        }
+
+        @Override
+        public @NonNull SimpleConstable simplify() {
+            return new SimpleConstable() {
+                @Override
+                public @NonNull SimpleConstable clone() {
+                    return this;
+                }
+
+                @Override
+                public @NonNull SimpleConstable reverse() {
+                    return this;
+                }
+
+                @Override
+                public @NonNull SimpleConstable plus(SimpleConstable simpleConstable) {
+                    return this;
+                }
+
+                @Override
+                public @NonNull SimpleConstable minus(SimpleConstable simpleConstable) {
+                    return this;
+                }
+
+                @Override
+                public @NonNull SimpleConstable multiply(SimpleConstable simpleConstable) {
+                    return this;
+                }
+
+                @Override
+                public @NonNull Simplifiable plus(Simplifiable simplifiable) {
+                    return this;
+                }
+
+                @Override
+                public @NonNull Simplifiable minus(Simplifiable simplifiable) {
+                    return this;
+                }
+
+                @Override
+                public @NonNull Simplifiable divided(Simplifiable simplifiable) {
+                    return this;
+                }
+
+                @Override
+                public @NonNull Simplifiable multiply(Simplifiable simplifiable) {
+                    return this;
+                }
+
+                @Override
+                public double doubleValue() {
+                    return 0;
+                }
+
+                @Override
+                public boolean isZero() {
+                    return false;
+                }
+
+                @Override
+                @NonNull
+                public String toString() {
+                    return "ERROR";
+                }
+            };
+        }
+
+        @Override
+        public @NonNull Simplifiable simpleValue() {
+            return this.simplify().simpleValue();
+        }
+
+        @Override
+        public @NonNull Constable clone() {
+            return this;
+        }
+
+        @Override
+        @NonNull
+        public String toString() {
+            return "ERROR";
+        }
+    };
 
     public static final Argument NULL_ARGUMENT = new Argument("", SimpleConstantLong.ONE) {
         @Override
@@ -25,12 +131,22 @@ public class Argument extends SimpleExpression implements SimpleMonomialable, Co
         }
     };
     private final String name;
+    private boolean unknown;
 
     private Constable value;
 
-    public Argument(@NonNull String name, @NonNull Constable value) {
+    private Argument(@NonNull String name, @NonNull Constable value) {
+        this(name,value,false);
+    }
+
+    private Argument(@NonNull String name, @NonNull Constable value,boolean unknown){
         this.name = name;
         this.value = value;
+        this.unknown = unknown;
+    }
+
+    Argument(@NonNull String name) {
+        this(name,NULL_CONSTABLE,true);
     }
 
     @NonNull
@@ -39,16 +155,20 @@ public class Argument extends SimpleExpression implements SimpleMonomialable, Co
     }
 
     public boolean isUnknown() {
-        return false;
+        return this.unknown;
     }
 
     @NonNull
     public Constable getValue() throws UnknownArgumentException {
+        if (this.isUnknown())
+            throw new UnknownArgumentException(this);
         return value;
     }
 
-    public void setValue(@NonNull Constable value) {
+    public Argument setValue(@NonNull Constable value) {
         this.value = value;
+        this.unknown = false;
+        return this;
     }
 
     @Override
@@ -58,7 +178,7 @@ public class Argument extends SimpleExpression implements SimpleMonomialable, Co
 
     @Override
     public @NonNull Argument clone() {
-        return new Argument(this.name, this.value);
+        return new Argument(this.name, this.value,this.unknown);
     }
 
     @Override
@@ -87,14 +207,14 @@ public class Argument extends SimpleExpression implements SimpleMonomialable, Co
     @Override
     public @NonNull SimpleExpression multiply(SimpleExpression simpleExpression) {
         if (simpleExpression instanceof SimplePolynomial) {
-            SimpleMonomialable[] monomialables = ((SimplePolynomial) simpleExpression).getMonomials().toArray(new SimpleMonomialable[0]);
+            SimpleMonomialable[] monomialables = new SimpleMonomialable[((SimplePolynomial) simpleExpression).getMonomials().size()];
             for (int i = 0; i < monomialables.length; i++)
-                monomialables[i] = (SimpleMonomialable) Operator.MULTIPLY.operate(monomialables[i], new SimpleMonomial(SimpleConstantLong.ONE, this));
+                monomialables[i] = (SimpleMonomialable) Operator.MULTIPLY.operate(((SimplePolynomial) simpleExpression).getMonomials().get(i), new SimpleMonomial(SimpleConstantLong.ONE, this));
             return new SimplePolynomial(monomialables);
         } else {
-            List<Argument> arguments = Lists.newArrayList();
+            List<Argument> arguments = Lists.newArrayList(this);
             arguments.addAll(((SimpleMonomialable) simpleExpression).getArguments());
-            return new SimpleMonomial(Operator.MULTIPLY.operate(this.getK(), ((SimpleMonomialable) simpleExpression).getK()), this, arguments.toArray(new Argument[0]));
+            return new SimpleMonomial(Operator.MULTIPLY.operate(this.getK(), ((SimpleMonomialable) simpleExpression).getK()), arguments.toArray(new Argument[0]));
         }
     }
 
@@ -109,13 +229,8 @@ public class Argument extends SimpleExpression implements SimpleMonomialable, Co
     }
 
     @Override
-    public @NonNull Argument getFirst() {
-        return this;
-    }
-
-    @Override
-    public @NonNull List<Argument> getLast() {
-        return Lists.newArrayList();
+    public @NonNull SimpleMonomialable simpleValue() {
+        return this.isUnknown() ? this.clone():this.value.simplify();
     }
 
     @Override
@@ -149,5 +264,23 @@ public class Argument extends SimpleExpression implements SimpleMonomialable, Co
     @Override
     public int compareTo(Argument o) {
         return this.getName().compareTo(o.getName());
+    }
+
+    public void setUnknown() {
+        this.unknown = true;
+        this.value = NULL_CONSTABLE;
+    }
+
+    public static Argument getArgument(String name) {
+        for (Argument argument:arguments.keySet())
+            if (name.equals(argument.getName()))
+                return argument;
+        Argument argument = new Argument(name);
+        arguments.put(argument,WEAK_OBJECT);
+        return argument;
+    }
+
+    public static Argument getAndSetArgument(String name,Constable value) {
+        return getArgument(name).setValue(value);
     }
 }

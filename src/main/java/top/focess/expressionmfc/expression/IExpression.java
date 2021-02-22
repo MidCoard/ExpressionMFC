@@ -18,6 +18,9 @@ public interface IExpression {
     Simplifiable simplify();
 
     @NonNull
+    Simplifiable simpleValue();
+
+    @NonNull
     Constable value() throws UnknownArgumentException;
 
     default boolean isNeedBracket() {
@@ -45,4 +48,6 @@ public interface IExpression {
         MultiExpression multiExpression = new MultiExpression(this);
         return multiExpression.append(Operator.MULTIPLY, expression);
     }
+
+
 }

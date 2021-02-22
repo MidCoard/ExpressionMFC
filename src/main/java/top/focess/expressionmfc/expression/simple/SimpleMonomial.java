@@ -1,7 +1,10 @@
 package top.focess.expressionmfc.expression.simple;
 
 import com.google.common.collect.Lists;
+import com.sun.org.apache.xpath.internal.Arg;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.units.qual.A;
+import org.checkerframework.checker.units.qual.C;
 import top.focess.expressionmfc.argument.Argument;
 import top.focess.expressionmfc.exception.UnknownArgumentException;
 import top.focess.expressionmfc.expression.Constable;
@@ -16,23 +19,33 @@ import java.util.List;
 public class SimpleMonomial extends SimpleExpression implements SimpleMonomialable {
 
     private final SimpleConstable k;
-    private final Argument first;
     private final List<Argument> arguments;
 
-    public SimpleMonomial(SimpleConstable k, Argument first, Argument... arguments) {
+    public SimpleMonomial(SimpleConstable k, Argument... arguments) {
         this.k = k;
-        this.first = first;
-        this.arguments = Lists.newArrayList(arguments);
+        if (arguments.length != 0)
+            this.arguments = Lists.newArrayList(arguments);
+        else this.arguments = Lists.newArrayList(Argument.NULL_ARGUMENT);
     }
 
-    @NonNull
-    public Argument getFirst() {
-        return this.first;
-    }
-
-    @NonNull
-    public List<Argument> getLast() {
-        return this.arguments;
+    @Override
+    public @NonNull SimpleMonomialable simpleValue() {
+        ConstantExpression constantExpression = new ConstantExpression(this.getK());
+        List<Argument> arguments = Lists.newArrayList();
+        for (Argument argument:this.getArguments()) {
+            if (!argument.isUnknown()) {
+                try {
+                    constantExpression.append(argument.getValue());
+                } catch (UnknownArgumentException e) {
+                    e.printStackTrace();
+                }
+            }
+            else arguments.add(argument);
+        }
+        if (arguments.size() == 0)
+            return constantExpression.simplify();
+        else
+            return new SimpleMonomial(constantExpression.simplify(), arguments.toArray(new Argument[0]) );
     }
 
     @Override
@@ -44,15 +57,12 @@ public class SimpleMonomial extends SimpleExpression implements SimpleMonomialab
     @Override
     @NonNull
     public List<Argument> getArguments() {
-        List<Argument> arguments = Lists.newArrayList(this.first);
-        arguments.addAll(this.arguments);
-        Collections.sort(arguments);
         return arguments;
     }
 
     @Override
     public @NonNull SimpleMonomial reverse() {
-        return new SimpleMonomial(this.getK().reverse(), this.first, this.arguments.toArray(new Argument[0]));
+        return new SimpleMonomial(this.getK().reverse(), this.arguments.toArray(new Argument[0]));
     }
 
     @Override
@@ -67,16 +77,13 @@ public class SimpleMonomial extends SimpleExpression implements SimpleMonomialab
         a.removeAll(arguments);
         if (a.size() == 0)
             return new SimpleMonomial(this.getK(), Argument.NULL_ARGUMENT);
-        else {
-            Argument first = a.get(a.size() - 1);
-            a.remove(a.size() - 1);
-            return new SimpleMonomial(this.getK(), first, a.toArray(new Argument[0]));
-        }
+        else
+            return new SimpleMonomial(this.getK(),a.toArray(new Argument[0]));
     }
 
     @Override
     public @NonNull SimpleMonomial clone() {
-        return new SimpleMonomial(this.getK(), this.first, this.getArguments().toArray(new Argument[0]));
+        return new SimpleMonomial(this.getK(),this.getArguments().toArray(new Argument[0]));
     }
 
     @Override
@@ -105,14 +112,14 @@ public class SimpleMonomial extends SimpleExpression implements SimpleMonomialab
     @Override
     public @NonNull SimpleExpression multiply(SimpleExpression simpleExpression) {
         if (simpleExpression instanceof SimplePolynomial) {
-            SimpleMonomialable[] monomialables = ((SimplePolynomial) simpleExpression).getMonomials().toArray(new SimpleMonomialable[0]);
+            SimpleMonomialable[] monomialables = new SimpleMonomialable[((SimplePolynomial) simpleExpression).getMonomials().size()];
             for (int i = 0; i < monomialables.length; i++)
-                monomialables[i] = (SimpleMonomialable) Operator.MULTIPLY.operate(monomialables[i], this);
+                monomialables[i] = (SimpleMonomialable) Operator.MULTIPLY.operate(((SimplePolynomial) simpleExpression).getMonomials().get(i), this);
             return new SimplePolynomial(monomialables);
         } else {
             List<Argument> arguments = Lists.newArrayList(this.arguments);
             arguments.addAll(((SimpleMonomialable) simpleExpression).getArguments());
-            return new SimpleMonomial(Operator.MULTIPLY.operate(this.getK(), ((SimpleMonomialable) simpleExpression).getK()), this.first, arguments.toArray(new Argument[0]));
+            return new SimpleMonomial(Operator.MULTIPLY.operate(this.getK(), ((SimpleMonomialable) simpleExpression).getK()),arguments.toArray(new Argument[0]));
         }
     }
 
@@ -134,8 +141,7 @@ public class SimpleMonomial extends SimpleExpression implements SimpleMonomialab
     @Override
     public @NonNull Constable value() throws UnknownArgumentException {
         ConstantExpression constantExpression = new ConstantExpression(this.getK());
-        constantExpression.append(Operator.MULTIPLY, this.first.getValue());
-        for (Argument argument : this.arguments)
+        for (Argument argument : this.getArguments())
             constantExpression.append(Operator.MULTIPLY, argument.getValue());
         return constantExpression;
     }

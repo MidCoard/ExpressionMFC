@@ -1,7 +1,8 @@
 package top.focess.expressionmfc.expression.simple.constant;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import top.focess.expressionmfc.exception.DivideByZeroException;
+import top.focess.expressionmfc.exception.DividedByZeroException;
+import top.focess.expressionmfc.expression.Simplifiable;
 import top.focess.expressionmfc.expression.simple.SimpleExpression;
 import top.focess.expressionmfc.expression.simple.SimpleFraction;
 import top.focess.expressionmfc.operator.Operator;
@@ -10,35 +11,30 @@ public class SimpleConstantFraction extends SimpleFraction implements SimpleCons
 
     public static final SimpleConstantFraction ONE = new SimpleConstantFraction(SimpleConstantLong.ONE, SimpleConstantLong.ONE);
 
-    private final SimpleConstant numerator;
-    private final SimpleConstant denominator;
-
     public SimpleConstantFraction(SimpleConstant numerator, SimpleConstant denominator) {
         super(numerator, denominator);
-        this.numerator = numerator;
-        this.denominator = denominator;
     }
 
     @Override
-    public double doubleValue() throws DivideByZeroException {
-        if (this.denominator.isZero())
-            throw new DivideByZeroException(this.denominator);
-        return this.numerator.doubleValue() / this.denominator.doubleValue();
+    public double doubleValue() throws DividedByZeroException {
+        if (this.getDenominator().isZero())
+            throw new DividedByZeroException(this.getDenominator());
+        return this.getNumerator().doubleValue() / this.getNumerator().doubleValue();
     }
 
     @Override
     public boolean isZero() {
-        return this.numerator.isZero();
+        return this.getNumerator().isZero();
     }
 
     @Override
     public @NonNull SimpleConstant getNumerator() {
-        return this.numerator;
+        return (SimpleConstant) super.getNumerator();
     }
 
     @Override
     public @NonNull SimpleConstant getDenominator() {
-        return this.denominator;
+        return (SimpleConstant) super.getDenominator();
     }
 
     @Override
@@ -48,7 +44,7 @@ public class SimpleConstantFraction extends SimpleFraction implements SimpleCons
     }
 
     @Override
-    public @NonNull SimpleConstable reverse() {
+    public @NonNull SimpleConstantFraction reverse() {
         return new SimpleConstantFraction(this.getNumerator().reverse(), this.getDenominator());
     }
 
@@ -94,4 +90,13 @@ public class SimpleConstantFraction extends SimpleFraction implements SimpleCons
         return this.clone();
     }
 
+    @Override
+    public @NonNull SimpleConstantFraction simplify() {
+        return this.clone();
+    }
+
+    @Override
+    public @NonNull SimpleConstantFraction simpleValue() {
+        return this.clone();
+    }
 }

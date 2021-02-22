@@ -85,6 +85,29 @@ public class MultiExpression extends Expression implements Iterable<MultiExpress
     }
 
     @Override
+    public @NonNull Simplifiable simpleValue() {
+        int first = -1;
+        int last = -1;
+        values = new Simplifiable[this.expressions.size()];
+        lefts = new Integer[this.expressions.size()];
+        rights = new Integer[this.expressions.size()];
+        for (OperatorHelper operatorHelper : this) {
+            if (last == operatorHelper.getPosition())
+                last = operatorHelper.getPosition() + 1;
+            else {
+                first = operatorHelper.getPosition();
+                last = operatorHelper.getPosition() + 1;
+            }
+            Simplifiable a = getOrDefault(getLeft(first)).simpleValue();
+            Simplifiable b = getOrDefault(getRight(last)).simpleValue();
+            values[getLeft(first)] = values[getRight(last)] = operatorHelper.getOperator().operate(a, b);
+            rights[first] = last;
+            lefts[last] = first;
+        }
+        return values[0];
+    }
+
+    @Override
     public @NonNull Constable value() throws UnknownArgumentException {
         AtomicReference<UnknownArgumentException> exception = new AtomicReference<>();
         Constable[] constables = this.expressions.stream().map(i -> {

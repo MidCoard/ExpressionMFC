@@ -1,11 +1,11 @@
 package top.focess.expressionmfc.exception;
 
-import top.focess.expressionmfc.argument.UnknownArgument;
+import top.focess.expressionmfc.argument.Argument;
 
 public class UnknownArgumentException extends ExpressionException {
 
 
-    public UnknownArgumentException(UnknownArgument argument) {
+    public UnknownArgumentException(Argument argument) {
         super("Argument \"" + argument.getName() + "\" is unknown.");
     }
 }

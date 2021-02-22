@@ -18,9 +18,6 @@ public interface SimpleMonomialable extends Monomialable, Simplifiable {
 
     @NonNull SimpleConstable getK();
 
-    @NonNull
-    Argument getFirst();
-
-    @NonNull
-    List<Argument> getLast();
+    @Override
+    @NonNull SimpleMonomialable simpleValue();
 }

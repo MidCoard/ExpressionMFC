@@ -48,8 +48,8 @@ public abstract class SimpleExpression extends SelfExpression implements Simplif
         if (simplifiable instanceof SimpleExpression)
             return new SimpleFraction(this, (SimpleExpression) simplifiable);
         else {
-            if (simplifiable instanceof SimpleIFraction) {
-                return new SimpleFraction(Operator.MULTIPLY.operate(this, ((SimpleIFraction) simplifiable).getDenominator()), ((SimpleIFraction) simplifiable).getNumerator());
+            if (simplifiable instanceof SimpleFraction) {
+                return new SimpleFraction(Operator.MULTIPLY.operate(this, ((SimpleFraction) simplifiable).getDenominator()), ((SimpleFraction) simplifiable).getNumerator());
             }
         }
         return null;

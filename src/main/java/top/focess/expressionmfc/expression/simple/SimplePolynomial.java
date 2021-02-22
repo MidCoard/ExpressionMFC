@@ -47,6 +47,14 @@ public class SimplePolynomial extends SimpleExpression {
     }
 
     @Override
+    public @NonNull Simplifiable simpleValue() {
+        SimpleMonomialable[] simpleMonomialables = new SimpleMonomialable[this.monomials.size()];
+        for (int i = 0;i<simpleMonomialables.length;i++)
+            simpleMonomialables[i] = this.getMonomials().get(i).simpleValue();
+        return new SimplePolynomial(simpleMonomialables);
+    }
+
+    @Override
     public @NonNull SimpleExpression plus(SimpleExpression simpleExpression) {
         if (simpleExpression instanceof SimplePolynomial) {
             @NonNull List<SimpleMonomialable> monomialables = Lists.newArrayList(((SimplePolynomial) simpleExpression).getMonomials());
@@ -77,18 +85,16 @@ public class SimplePolynomial extends SimpleExpression {
     @Override
     public @NonNull SimpleExpression multiply(SimpleExpression simpleExpression) {
         if (simpleExpression instanceof SimplePolynomial) {
-            SimpleMonomialable[] monomialables = this.getMonomials().toArray(new SimpleMonomialable[0]);
-            SimpleMonomialable[] monomialables2 = this.getMonomials().toArray(new SimpleMonomialable[0]);
-            SimpleMonomialable[] temp = new SimpleMonomialable[monomialables.length * monomialables2.length];
+            SimpleMonomialable[] temp = new SimpleMonomialable[this.getMonomials().size() * ((SimplePolynomial) simpleExpression).getMonomials().size()];
             int pos = 0;
-            for (SimpleMonomialable a : monomialables)
-                for (SimpleMonomialable b : monomialables2)
+            for (SimpleMonomialable a : this.getMonomials())
+                for (SimpleMonomialable b : ((SimplePolynomial) simpleExpression).getMonomials())
                     temp[pos++] = (SimpleMonomialable) Operator.MULTIPLY.operate(a, b);
             return new SimplePolynomial(temp);
         } else {
-            SimpleMonomialable[] monomialables = this.getMonomials().toArray(new SimpleMonomialable[0]);
+            SimpleMonomialable[] monomialables = new SimpleMonomialable[this.getMonomials().size()];
             for (int i = 0; i < monomialables.length; i++)
-                monomialables[i] = (SimpleMonomialable) Operator.MULTIPLY.operate(monomialables[i], simpleExpression);
+                monomialables[i] = (SimpleMonomialable) Operator.MULTIPLY.operate(this.getMonomials().get(i), simpleExpression);
             return new SimplePolynomial(monomialables);
         }
     }
@@ -143,9 +149,9 @@ public class SimplePolynomial extends SimpleExpression {
 
     @Override
     public @NonNull SimpleExpression removeSameArguments(List<Argument> arguments) {
-        SimpleMonomialable[] simpleMonomialables = this.monomials.toArray(new SimpleMonomialable[0]);
+        SimpleMonomialable[] simpleMonomialables = new SimpleMonomialable[this.getMonomials().size()];
         for (int i = 0; i < simpleMonomialables.length; i++)
-            simpleMonomialables[i] = simpleMonomialables[i].removeSameArguments(arguments);
+            simpleMonomialables[i] = this.getMonomials().get(i).removeSameArguments(arguments);
         return new SimplePolynomial(simpleMonomialables);
     }
 
@@ -205,7 +211,7 @@ public class SimplePolynomial extends SimpleExpression {
             for (SimilarSimpleMonomialable similarMonomialable : this.keySet()) {
                 SimpleConstable constable;
                 if (!(constable = this.get(similarMonomialable)).isZero())
-                    monomialables.add(new SimpleMonomial(constable, similarMonomialable.monomialable.getFirst(), similarMonomialable.monomialable.getLast().toArray(new Argument[0])));
+                    monomialables.add(new SimpleMonomial(constable, similarMonomialable.monomialable.getArguments().toArray(new Argument[0])));
             }
             if (monomialables.size() == 0)
                 monomialables.add(SimpleConstantLong.ZERO);

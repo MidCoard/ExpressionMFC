@@ -1,7 +1,7 @@
 package top.focess.expressionmfc.expression;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import top.focess.expressionmfc.exception.DivideByZeroException;
+import top.focess.expressionmfc.exception.DividedByZeroException;
 import top.focess.expressionmfc.expression.constant.ConstantFraction;
 import top.focess.expressionmfc.expression.multi.ConstantExpression;
 import top.focess.expressionmfc.expression.simple.constant.SimpleConstable;
@@ -15,7 +15,7 @@ public interface Constable extends IExpression, Comparable<Constable> {
     @NonNull
     Constable clone();
 
-    double doubleValue() throws DivideByZeroException;
+    double doubleValue() throws DividedByZeroException;
 
     boolean isZero();
 
@@ -56,17 +56,17 @@ public interface Constable extends IExpression, Comparable<Constable> {
         double b;
         try {
             a = this.doubleValue();
-        } catch (DivideByZeroException e) {
+        } catch (DividedByZeroException e) {
             try {
                 o.doubleValue();
-            } catch (DivideByZeroException divideByZeroException) {
+            } catch (DividedByZeroException dividedByZeroException) {
                 return 0;
             }
             return 1;
         }
         try {
             b = o.doubleValue();
-        } catch (DivideByZeroException e) {
+        } catch (DividedByZeroException e) {
             return -1;
         }
         if (MathHelper.abs(a - b) < Double.MIN_NORMAL)

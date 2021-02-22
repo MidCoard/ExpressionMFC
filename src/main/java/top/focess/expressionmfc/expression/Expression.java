@@ -16,4 +16,7 @@ public abstract class Expression implements IExpression {
     @NonNull
     public abstract IExpression clone();
 
+    @NonNull
+    public abstract String toString();
+
 }
