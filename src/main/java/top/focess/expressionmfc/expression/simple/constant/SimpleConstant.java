@@ -1,23 +1,25 @@
 package top.focess.expressionmfc.expression.simple.constant;
 
+import com.google.common.collect.Lists;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import top.focess.expressionmfc.argument.Argument;
 import top.focess.expressionmfc.expression.Simplifiable;
 import top.focess.expressionmfc.expression.simple.SimpleExpression;
+import top.focess.expressionmfc.expression.simple.SimpleMonomialable;
 
-import java.util.Collections;
 import java.util.List;
 
 public abstract class SimpleConstant extends SimpleExpression implements SimpleConstable {
 
     @Override
-    public @NonNull SimpleConstant removeSameArguments(List<Argument> arguments) {
+    @NonNull
+    public SimpleMonomialable removeSameArguments(List<Argument> arguments) {
         return this.clone();
     }
 
     @Override
     public @NonNull List<Argument> getSameArguments() {
-        return Collections.singletonList(Argument.NULL_ARGUMENT);
+        return Lists.newArrayList();
     }
 
     @Override

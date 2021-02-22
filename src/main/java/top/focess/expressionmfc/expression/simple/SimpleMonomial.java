@@ -1,10 +1,7 @@
 package top.focess.expressionmfc.expression.simple;
 
 import com.google.common.collect.Lists;
-import com.sun.org.apache.xpath.internal.Arg;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.units.qual.A;
-import org.checkerframework.checker.units.qual.C;
 import top.focess.expressionmfc.argument.Argument;
 import top.focess.expressionmfc.exception.UnknownArgumentException;
 import top.focess.expressionmfc.expression.Constable;
@@ -25,27 +22,27 @@ public class SimpleMonomial extends SimpleExpression implements SimpleMonomialab
         this.k = k;
         if (arguments.length != 0)
             this.arguments = Lists.newArrayList(arguments);
-        else this.arguments = Lists.newArrayList(Argument.NULL_ARGUMENT);
+        else throw new IllegalArgumentException("The size of Arguments cannot be zero.");
+        Collections.sort(this.arguments);
     }
 
     @Override
     public @NonNull SimpleMonomialable simpleValue() {
-        ConstantExpression constantExpression = new ConstantExpression(this.getK());
+        SimpleConstable k = getK();
         List<Argument> arguments = Lists.newArrayList();
-        for (Argument argument:this.getArguments()) {
+        for (Argument argument : this.getArguments()) {
             if (!argument.isUnknown()) {
                 try {
-                    constantExpression.append(argument.getValue());
+                    k = Operator.MULTIPLY.operate(k, argument.getValue().simplify());
                 } catch (UnknownArgumentException e) {
                     e.printStackTrace();
                 }
-            }
-            else arguments.add(argument);
+            } else arguments.add(argument);
         }
         if (arguments.size() == 0)
-            return constantExpression.simplify();
+            return k;
         else
-            return new SimpleMonomial(constantExpression.simplify(), arguments.toArray(new Argument[0]) );
+            return new SimpleMonomial(k, arguments.toArray(new Argument[0]));
     }
 
     @Override
@@ -72,18 +69,19 @@ public class SimpleMonomial extends SimpleExpression implements SimpleMonomialab
 
     @Override
     @NonNull
-    public SimpleMonomial removeSameArguments(List<Argument> arguments) {
+    public SimpleMonomialable removeSameArguments(List<Argument> arguments) {
         List<Argument> a = Lists.newArrayList(this.getArguments());
-        a.removeAll(arguments);
+        for (Argument argument : arguments)
+            a.remove(argument);
         if (a.size() == 0)
-            return new SimpleMonomial(this.getK(), Argument.NULL_ARGUMENT);
+            return this.getK();
         else
-            return new SimpleMonomial(this.getK(),a.toArray(new Argument[0]));
+            return new SimpleMonomial(this.getK(), a.toArray(new Argument[0]));
     }
 
     @Override
     public @NonNull SimpleMonomial clone() {
-        return new SimpleMonomial(this.getK(),this.getArguments().toArray(new Argument[0]));
+        return new SimpleMonomial(this.getK(), this.getArguments().toArray(new Argument[0]));
     }
 
     @Override
@@ -119,7 +117,7 @@ public class SimpleMonomial extends SimpleExpression implements SimpleMonomialab
         } else {
             List<Argument> arguments = Lists.newArrayList(this.arguments);
             arguments.addAll(((SimpleMonomialable) simpleExpression).getArguments());
-            return new SimpleMonomial(Operator.MULTIPLY.operate(this.getK(), ((SimpleMonomialable) simpleExpression).getK()),arguments.toArray(new Argument[0]));
+            return new SimpleMonomial(Operator.MULTIPLY.operate(this.getK(), ((SimpleMonomialable) simpleExpression).getK()), arguments.toArray(new Argument[0]));
         }
     }
 
@@ -152,11 +150,14 @@ public class SimpleMonomial extends SimpleExpression implements SimpleMonomialab
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(this.getK().toString());
         for (Argument argument : this.getArguments()) {
-            if (argument != Argument.NULL_ARGUMENT) {
-                stringBuilder.append(" * ");
-                stringBuilder.append(argument.toString());
-            }
+            stringBuilder.append(" * ");
+            stringBuilder.append(argument.toString());
         }
         return stringBuilder.toString();
+    }
+
+    @Override
+    public boolean isNeedBracket() {
+        return this.arguments.size() > 1;
     }
 }

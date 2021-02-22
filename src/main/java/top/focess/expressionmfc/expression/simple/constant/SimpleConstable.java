@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import top.focess.expressionmfc.argument.Argument;
 import top.focess.expressionmfc.expression.Constable;
-import top.focess.expressionmfc.expression.Simplifiable;
 import top.focess.expressionmfc.expression.simple.SimpleMonomialable;
 
 import java.util.List;
@@ -13,7 +12,6 @@ public interface SimpleConstable extends SimpleMonomialable, Constable {
 
 
     @Override
-    @NonNull
     default SimpleMonomialable removeSameArguments(List<Argument> arguments) {
         return this.clone();
     }
@@ -27,7 +25,7 @@ public interface SimpleConstable extends SimpleMonomialable, Constable {
     @Override
     @NonNull
     default List<Argument> getArguments() {
-        return Lists.newArrayList(Argument.NULL_ARGUMENT);
+        return Lists.newArrayList();
     }
 
     @NonNull
@@ -51,7 +49,8 @@ public interface SimpleConstable extends SimpleMonomialable, Constable {
     SimpleConstable multiply(SimpleConstable simpleConstable);
 
     @Override
-    @NonNull default SimpleConstable simpleValue() {
+    @NonNull
+    default SimpleConstable simpleValue() {
         return this.clone();
     }
 }

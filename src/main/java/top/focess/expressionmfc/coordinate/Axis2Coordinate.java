@@ -23,13 +23,13 @@ public class Axis2Coordinate extends Coordinate {
     }
 
     @NonNull
-    public Axis2CoordinateFunction append(EquationImp equation, Argument x,Argument y,Color color) {
-        return (Axis2CoordinateFunction) this.add(new Axis2CoordinateFunction(equation,x,y,color));
+    public Axis2CoordinateFunction append(EquationImp equation, Argument x, Argument y, Color color) {
+        return (Axis2CoordinateFunction) this.add(new Axis2CoordinateFunction(equation, x, y, color));
     }
 
     @NonNull
-    public Axis2CoordinateFunction append(EquationImp equation, Argument x,Argument y) {
-        return this.append(equation,x,y,Color.BLUE);
+    public Axis2CoordinateFunction append(EquationImp equation, Argument x, Argument y) {
+        return this.append(equation, x, y, Color.BLUE);
     }
 
     @Override
@@ -42,16 +42,16 @@ public class Axis2Coordinate extends Coordinate {
     public static class Axis2CoordinateFunction extends CoordinateFunction {
 
         Axis2CoordinateFunction(EquationImp equation, Argument x, Argument y, Color color) {
-            super(equation,color, x,y);
+            super(equation, color, x, y);
         }
 
         @NonNull
-        public Argument getX(){
+        public Argument getX() {
             return this.getArgument(0);
         }
 
         @NonNull
-        public Argument getY(){
+        public Argument getY() {
             return this.getArgument(1);
         }
     }
@@ -59,16 +59,16 @@ public class Axis2Coordinate extends Coordinate {
     private class CoordinateFrame extends JFrame {
 
         public CoordinateFrame() {
-            this(500,500);
+            this(500, 500);
         }
 
-        public CoordinateFrame(int width,int height) {
-            this("2-Axis-Coordinate",width,height);
+        public CoordinateFrame(int width, int height) {
+            this("2-Axis-Coordinate", width, height);
         }
 
-        public CoordinateFrame(String title,int width,int height) {
+        public CoordinateFrame(String title, int width, int height) {
             super(title);
-            this.setSize(width,height);
+            this.setSize(width, height);
             this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             this.add(new CoordinatePanel());
         }
@@ -88,7 +88,7 @@ public class Axis2Coordinate extends Coordinate {
             for (CoordinateFunction c : Axis2Coordinate.this.getFunctions()) {
                 Axis2CoordinateFunction function = (Axis2CoordinateFunction) c;
                 g.setColor(function.getColor());
-                for (int i = -width/2;i<width/2;i++) {
+                for (int i = -width / 2; i < width / 2; i++) {
                     double x = i;//todo
                     double y;
                     function.getX().setValue(new SimpleConstantDouble(x));
@@ -100,7 +100,7 @@ public class Axis2Coordinate extends Coordinate {
                         throw new CoordinateShowException(e);
                     }
                     if (MathHelper.abs(y) < height / 2.0)
-                        g.fillOval((int)(x + width / 2),(int)(y + height / 2),2,2);//todo
+                        g.fillOval((int) (x + width / 2), (int) (y + height / 2), 2, 2);//todo
                 }
             }
         }

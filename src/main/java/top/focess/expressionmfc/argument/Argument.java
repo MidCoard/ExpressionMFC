@@ -22,7 +22,7 @@ public class Argument extends SimpleExpression implements SimpleMonomialable, Co
 
     private static final Object WEAK_OBJECT = new Object();
 
-    private static final Map<Argument,Object> arguments = new WeakHashMap<>();
+    private static final Map<Argument, Object> arguments = new WeakHashMap<>();
 
 
     private static final Constable NULL_CONSTABLE = new Constable() {
@@ -102,7 +102,7 @@ public class Argument extends SimpleExpression implements SimpleMonomialable, Co
                 @Override
                 @NonNull
                 public String toString() {
-                    return "ERROR";
+                    return "UNKNOWN_ARGUMENT";
                 }
             };
         }
@@ -120,33 +120,40 @@ public class Argument extends SimpleExpression implements SimpleMonomialable, Co
         @Override
         @NonNull
         public String toString() {
-            return "ERROR";
+            return "UNKNOWN_ARGUMENT";
         }
     };
 
-    public static final Argument NULL_ARGUMENT = new Argument("", SimpleConstantLong.ONE) {
-        @Override
-        public @NonNull String toString() {
-            return "1";
-        }
-    };
     private final String name;
     private boolean unknown;
 
     private Constable value;
 
     private Argument(@NonNull String name, @NonNull Constable value) {
-        this(name,value,false);
+        this(name, value, false);
     }
 
-    private Argument(@NonNull String name, @NonNull Constable value,boolean unknown){
+    private Argument(@NonNull String name, @NonNull Constable value, boolean unknown) {
         this.name = name;
         this.value = value;
         this.unknown = unknown;
     }
 
     Argument(@NonNull String name) {
-        this(name,NULL_CONSTABLE,true);
+        this(name, NULL_CONSTABLE, true);
+    }
+
+    public static Argument getArgument(String name) {
+        for (Argument argument : arguments.keySet())
+            if (name.equals(argument.getName()))
+                return argument;
+        Argument argument = new Argument(name);
+        arguments.put(argument, WEAK_OBJECT);
+        return argument;
+    }
+
+    public static Argument getAndSetArgument(String name, Constable value) {
+        return getArgument(name).setValue(value);
     }
 
     @NonNull
@@ -178,7 +185,7 @@ public class Argument extends SimpleExpression implements SimpleMonomialable, Co
 
     @Override
     public @NonNull Argument clone() {
-        return new Argument(this.name, this.value,this.unknown);
+        return this;
     }
 
     @Override
@@ -230,7 +237,7 @@ public class Argument extends SimpleExpression implements SimpleMonomialable, Co
 
     @Override
     public @NonNull SimpleMonomialable simpleValue() {
-        return this.isUnknown() ? this.clone():this.value.simplify();
+        return this.isUnknown() ? this.clone() : this.value.simplify();
     }
 
     @Override
@@ -249,9 +256,10 @@ public class Argument extends SimpleExpression implements SimpleMonomialable, Co
     }
 
     @Override
-    public @NonNull Argument removeSameArguments(List<Argument> arguments) {
+    @NonNull
+    public SimpleMonomialable removeSameArguments(List<Argument> arguments) {
         if (arguments.contains(this))
-            return NULL_ARGUMENT;
+            return SimpleConstantLong.ONE;
         else return this.clone();
     }
 
@@ -269,18 +277,5 @@ public class Argument extends SimpleExpression implements SimpleMonomialable, Co
     public void setUnknown() {
         this.unknown = true;
         this.value = NULL_CONSTABLE;
-    }
-
-    public static Argument getArgument(String name) {
-        for (Argument argument:arguments.keySet())
-            if (name.equals(argument.getName()))
-                return argument;
-        Argument argument = new Argument(name);
-        arguments.put(argument,WEAK_OBJECT);
-        return argument;
-    }
-
-    public static Argument getAndSetArgument(String name,Constable value) {
-        return getArgument(name).setValue(value);
     }
 }

@@ -10,7 +10,6 @@ import java.util.List;
 
 public interface SimpleMonomialable extends Monomialable, Simplifiable {
 
-    @NonNull
     SimpleMonomialable removeSameArguments(List<Argument> arguments);
 
     @NonNull

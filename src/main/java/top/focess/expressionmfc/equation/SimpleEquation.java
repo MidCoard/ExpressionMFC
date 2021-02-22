@@ -5,7 +5,7 @@ import top.focess.expressionmfc.argument.Argument;
 import top.focess.expressionmfc.exception.UnknownArgumentNotFoundException;
 import top.focess.expressionmfc.expression.Constable;
 
-public abstract class SimpleEquation extends Equation{
+public abstract class SimpleEquation extends Equation {
     public SimpleEquation(Argument left, Constable right) {
         super(left, right);
     }

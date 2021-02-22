@@ -40,7 +40,8 @@ public interface IExpression {
 
     @NonNull
     default MultiExpression minus(IExpression expression) {
-        return expression.plus(this).reverse();
+        MultiExpression multiExpression = new MultiExpression(this);
+        return multiExpression.append(Operator.MINUS, expression);
     }
 
     @NonNull

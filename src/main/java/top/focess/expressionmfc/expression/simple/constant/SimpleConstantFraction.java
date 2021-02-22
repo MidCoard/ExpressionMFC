@@ -2,7 +2,6 @@ package top.focess.expressionmfc.expression.simple.constant;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import top.focess.expressionmfc.exception.DividedByZeroException;
-import top.focess.expressionmfc.expression.Simplifiable;
 import top.focess.expressionmfc.expression.simple.SimpleExpression;
 import top.focess.expressionmfc.expression.simple.SimpleFraction;
 import top.focess.expressionmfc.operator.Operator;

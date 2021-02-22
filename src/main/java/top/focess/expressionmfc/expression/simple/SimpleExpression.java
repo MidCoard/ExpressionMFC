@@ -61,6 +61,5 @@ public abstract class SimpleExpression extends SelfExpression implements Simplif
     @NonNull
     public abstract List<Argument> getSameArguments();
 
-    @NonNull
-    public abstract SimpleExpression removeSameArguments(List<Argument> arguments);
+    public abstract @NonNull Simplifiable removeSameArguments(List<Argument> arguments);
 }

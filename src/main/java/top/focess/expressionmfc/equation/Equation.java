@@ -15,14 +15,17 @@ public abstract class Equation {
         this.left = left;
         this.right = right;
     }
+
     @NonNull
     public IExpression getLeft() {
         return left;
     }
+
     @NonNull
     public IExpression getRight() {
         return right;
     }
+
     @NonNull
     public abstract SimpleEquation solve(Argument argument) throws UnknownArgumentNotFoundException, IllegalUnknownArgumentException;
 }

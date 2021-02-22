@@ -93,7 +93,7 @@ public class ConstantExpression extends MultiExpression implements Constable {
             rights[first] = last;
             lefts[last] = first;
         }
-        return values[0];
+        return getOrDefault(0);
     }
 
     @Override

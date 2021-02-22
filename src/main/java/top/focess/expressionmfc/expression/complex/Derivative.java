@@ -19,7 +19,7 @@ public class Derivative extends ComplexExpression {
 
     @NonNull
     public IExpression getOriginalExpression() {
-        return  this.getChildExpression(0);
+        return this.getChildExpression(0);
     }
 
     public @NonNull Argument getArgument() {
@@ -28,31 +28,31 @@ public class Derivative extends ComplexExpression {
 
     @Override
     public @NonNull IExpression reverse() {
-        return new Derivative(this.getOriginalExpression().reverse(),this.argument);
+        return new Derivative(this.getOriginalExpression().reverse(), this.argument);
     }
 
     @Override
     public @NonNull IExpression clone() {
-        return new Derivative(this.getOriginalExpression(),this.argument);
+        return new Derivative(this.getOriginalExpression(), this.argument);
     }
 
     @Override
     public @NonNull String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append('d');
-        if (this.getOriginalExpression().isNeedBracket())
+        if (this.getOriginalExpression().isNeedBracket() || this.getOriginalExpression() instanceof Fraction)
             stringBuilder.append('(');
         stringBuilder.append(this.getOriginalExpression().toString());
-        if (this.getOriginalExpression().isNeedBracket())
+        if (this.getOriginalExpression().isNeedBracket() || this.getOriginalExpression() instanceof Fraction)
             stringBuilder.append(')');
-        stringBuilder.append("/d");
+        stringBuilder.append(" / d");
         stringBuilder.append(this.argument.toString());
         return stringBuilder.toString();
     }
 
     @Override
     public @NonNull Simplifiable simplify() {
-        return new SimpleDerivative(this.getOriginalExpression().simplify(),this.argument).simplify();
+        return new SimpleDerivative(this.getOriginalExpression().simplify(), this.argument).simplify();
     }
 
     @Override

@@ -81,7 +81,7 @@ public class MultiExpression extends Expression implements Iterable<MultiExpress
             rights[first] = last;
             lefts[last] = first;
         }
-        return values[0];
+        return getOrDefault(0).simplify();
     }
 
     @Override
@@ -104,7 +104,7 @@ public class MultiExpression extends Expression implements Iterable<MultiExpress
             rights[first] = last;
             lefts[last] = first;
         }
-        return values[0];
+        return getOrDefault(0).simpleValue();
     }
 
     @Override
@@ -160,7 +160,7 @@ public class MultiExpression extends Expression implements Iterable<MultiExpress
 
     @Override
     public boolean isNeedBracket() {
-        return operatorHelpers.stream().anyMatch(operatorHelper -> operatorHelper.getOperator() == Operator.PLUS);
+        return true;
     }
 
     @NonNull

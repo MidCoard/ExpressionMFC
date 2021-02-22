@@ -2,8 +2,6 @@ package top.focess.expressionmfc.coordinate;
 
 import com.google.common.collect.Lists;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.List;
 
 public abstract class Coordinate {

@@ -8,8 +8,6 @@ import top.focess.expressionmfc.expression.simple.SimpleExpression;
 import top.focess.expressionmfc.expression.simple.constant.SimpleConstable;
 import top.focess.expressionmfc.expression.simple.constant.SimpleConstant;
 
-import java.util.Objects;
-
 public enum Operator {
     PLUS("+", 0), MINUS("-", 0), MULTIPLY("*", 1), DIVIDED("/", 1);
 
@@ -45,7 +43,7 @@ public enum Operator {
     }
 
     @NonNull
-    public IExpression operate(IExpression a,IExpression b) {
+    public IExpression operate(IExpression a, IExpression b) {
         switch (this) {
             case PLUS:
                 return a.plus(b);
@@ -65,16 +63,16 @@ public enum Operator {
         if (this == PLUS || this == MULTIPLY) {
             if (a instanceof SimpleExpression && !(b instanceof SimpleExpression))
                 return operate(b, a);
-            else if (a instanceof SimpleExpression && b instanceof SimpleExpression) {
+            else if (a instanceof SimpleExpression) {
                 if (a instanceof Constable && !(b instanceof Constable))
                     return operate(b, a);
             }
         } else if (this == MINUS) {
             if (a instanceof SimpleExpression && !(b instanceof SimpleExpression))
-                return Objects.requireNonNull(operate(b, a)).reverse();
-            else if (a instanceof SimpleExpression && b instanceof SimpleExpression) {
+                return operate(b, a).reverse();
+            else if (a instanceof SimpleExpression) {
                 if (a instanceof Constable && !(b instanceof Constable))
-                    return Objects.requireNonNull(operate(b, a)).reverse();
+                    return operate(b, a).reverse();
             }
         }
         switch (this) {
@@ -98,7 +96,7 @@ public enum Operator {
                 return operate(b, a);
         } else if (this == MINUS) {
             if (a instanceof Constable && !(b instanceof Constable))
-                return Objects.requireNonNull(operate(b, a)).reverse();
+                return operate(b, a).reverse();
         }
         switch (this) {
             case PLUS:
@@ -112,13 +110,14 @@ public enum Operator {
         }
     }
 
+    @NonNull
     public SimpleConstable operate(SimpleConstable a, SimpleConstable b) {
         if (this == PLUS || this == MULTIPLY) {
             if (a instanceof SimpleConstant && !(b instanceof SimpleConstant))
                 return operate(b, a);
         } else if (this == MINUS) {
             if (a instanceof SimpleConstant && !(b instanceof SimpleConstant))
-                return Objects.requireNonNull(operate(b, a)).reverse();
+                return operate(b, a).reverse();
         }
         switch (this) {
             case PLUS:

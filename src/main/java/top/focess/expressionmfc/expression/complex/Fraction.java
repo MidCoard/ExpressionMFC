@@ -10,26 +10,24 @@ import top.focess.expressionmfc.expression.simple.SimpleExpression;
 import top.focess.expressionmfc.operator.Operator;
 import top.focess.expressionmfc.util.Pair;
 
-import java.util.Objects;
-
 public class Fraction extends ComplexExpression {
 
     public Fraction(IExpression numerator, IExpression denominator) {
         super(numerator, denominator);
     }
 
-    public Fraction(Pair<SimpleExpression, SimpleExpression> pair) {
-        super(pair.getKey(),pair.getValue());
+    protected Fraction(Pair<SimpleExpression, SimpleExpression> pair) {
+        super(pair.getKey(), pair.getValue());
     }
 
     @Override
     public @NonNull Simplifiable simplify() {
-        return Objects.requireNonNull(Operator.DIVIDED.operate(this.getNumerator().simplify(), this.getDenominator().simplify()));
+        return Operator.DIVIDED.operate(this.getNumerator().simplify(), this.getDenominator().simplify());
     }
 
     @Override
     public @NonNull Simplifiable simpleValue() {
-        return this.simplify().simpleValue();
+        return Operator.DIVIDED.operate(this.getNumerator().simpleValue(), this.getDenominator().simpleValue());
     }
 
     @Override
@@ -66,7 +64,7 @@ public class Fraction extends ComplexExpression {
         if (this.getNumerator().isNeedBracket()) {
             stringBuilder.append(')');
         }
-        stringBuilder.append('/');
+        stringBuilder.append(" / ");
         if (this.getDenominator().isNeedBracket()) {
             stringBuilder.append('(');
         }
