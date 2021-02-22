@@ -26,7 +26,7 @@ public class ExpressionMFCLauncher {
         SimpleMonomial simpleMonomial = new SimpleMonomial(SimpleConstantLong.ONE, Argument.getArgument("f"));
         System.out.println(simpleMonomial);
         System.out.println(simpleMonomial.simpleValue());
-        ExpressionParser expressionParser = new ExpressionParser(" a *(c*((b+a+c)*d))/(a+b) + 1 - 2 * 3 + 100 + a*100/a");
+        ExpressionParser expressionParser = new ExpressionParser(" a *(c*((b+a+c)*d))/(a+b) + 0.2 - 2 * 3 + 100 + a*100/a");
         MultiExpression expression = expressionParser.getExpression();
         System.out.println(expression.simplify());
         Argument a = expressionParser.getArgument("a");
@@ -48,10 +48,13 @@ public class ExpressionMFCLauncher {
         Argument c = expressionParser.getArgument("c");
         Argument d = expressionParser.getArgument("d");
         a.setValue(SimpleConstantLong.ONE);
+        System.out.println(expression.simpleValue());
         b.setValue(SimpleConstantLong.ONE);
+        System.out.println(expression.simpleValue());
         c.setValue(SimpleConstantLong.ONE);
+        System.out.println(expression.simpleValue());
         d.setValue(SimpleConstantLong.ONE);
-//        System.out.println(expression.value());
+        System.out.println(expression.simpleValue());
         System.out.println(expression.simplify());
         System.out.println(expression.simplify().value());
         System.out.println(expression.simplify().value().simplify());

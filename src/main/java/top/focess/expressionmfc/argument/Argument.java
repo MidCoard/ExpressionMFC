@@ -129,10 +129,6 @@ public class Argument extends SimpleExpression implements SimpleMonomialable, Co
 
     private Constable value;
 
-    private Argument(@NonNull String name, @NonNull Constable value) {
-        this(name, value, false);
-    }
-
     private Argument(@NonNull String name, @NonNull Constable value, boolean unknown) {
         this.name = name;
         this.value = value;
