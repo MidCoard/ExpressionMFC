@@ -91,6 +91,8 @@ public class Axis2Coordinate extends Coordinate {
             g.drawLine(width / 2, 0, width / 2, height);
             double base = Axis2Coordinate.this.getFunctions().size() * width * width * 100;
             double pos = 0;
+            double last = 0;
+            System.out.println("Show: 0%");
             for (CoordinateFunction c : Axis2Coordinate.this.getFunctions()) {
                 Axis2CoordinateFunction function = (Axis2CoordinateFunction) c;
                 g.setColor(function.getColor());
@@ -98,7 +100,10 @@ public class Axis2Coordinate extends Coordinate {
                 for (double x = -width /200.0 ; x < width /200.0; x+=0.001)
                 for (double y = -height / 200.0 ; y < height / 200.0; y+= 0.001){
                     pos++;
-                    System.out.println(pos/base * 100);
+                    if (pos / base * 100 - last > 1) {
+                        last = pos / base * 100;
+                        System.out.printf("Show: %.0f%%\n",last);
+                    }
                     function.getX().setValue(new SimpleConstantDouble(x));
                     function.getY().setValue(new SimpleConstantDouble(y));
                     try {
@@ -109,6 +114,7 @@ public class Axis2Coordinate extends Coordinate {
                     }
                 }
             }
+            System.out.println("Show: 100%");
         }
     }
 }
