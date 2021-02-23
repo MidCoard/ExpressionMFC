@@ -20,7 +20,7 @@ public class SimpleConstantDouble extends SimpleConstant {
 
     @Override
     public boolean isZero() {
-        return MathHelper.abs(this.value) < Double.MIN_NORMAL;
+        return MathHelper.abs(this.value) < 1e-15;
     }
 
     @Override

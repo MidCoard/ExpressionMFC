@@ -6,6 +6,10 @@ import top.focess.expressionmfc.equation.Solution;
 import top.focess.expressionmfc.exception.*;
 import top.focess.expressionmfc.parser.EquationParser;
 
+import java.awt.*;
+
+import static top.focess.expressionmfc.argument.Argument.*;
+
 public class ExpressionMFCLauncher {
 
     public static void main(String[] args) throws DividedByZeroException, UnknownArgumentException, InvalidExpressionException, InvalidEquationException, IllegalUnknownArgumentException, UnknownArgumentNotFoundException, NoSolutionException {
@@ -21,13 +25,16 @@ public class ExpressionMFCLauncher {
 //        Derivative derivative = new Derivative(expressionParser.getExpression().simplify(),Argument.getArgument("x"));
 //        System.out.println(derivative.simplify());
 //        EquationParser parser1 = new EquationParser("y =-1* x*x");
-        EquationParser parser2 = new EquationParser("y * y = x");
+        EquationParser parser2 = new EquationParser("x * x = x");
+        EquationParser parser1 = new EquationParser("x * y = x");
 //        System.out.println(parser1.getEquation().solve(Argument.getArgument("x"), Solution.NEWTON).getAnswer());
 //        IExpression expression = parser.getExpression();
-//        System.out.println(parser1.getEquation());
+//        System.out.println(parser2.getEquation());
+//        System.out.println(parser2.getEquation().solve(X,Solution.NEWTON));
         Axis2Coordinate axis2Coordinate = new Axis2Coordinate();
 //        axis2Coordinate.append(parser1.getEquation(), Argument.getArgument("x"),Argument.getArgument("y"));
         axis2Coordinate.append(parser2.getEquation());
+        axis2Coordinate.append(parser1.getEquation(),X,Y, Color.GREEN);
         axis2Coordinate.show();
 //        SimpleMonomial simpleMonomial = new SimpleMonomial(SimpleConstantLong.ONE, Argument.getArgument("f"));
 //        System.out.println(simpleMonomial);

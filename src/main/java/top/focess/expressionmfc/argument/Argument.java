@@ -2,6 +2,7 @@ package top.focess.expressionmfc.argument;
 
 import com.google.common.collect.Lists;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.units.qual.A;
 import top.focess.expressionmfc.exception.UnknownArgumentException;
 import top.focess.expressionmfc.expression.Constable;
 import top.focess.expressionmfc.expression.Simplifiable;
@@ -24,6 +25,11 @@ public class Argument extends SimpleExpression implements SimpleMonomialable, Co
 
     private static final Map<Argument, Object> arguments = new WeakHashMap<>();
 
+    public static final Argument X = Argument.getArgument("x");
+
+    public static final Argument Y = Argument.getArgument("y");
+
+    public static final Argument Z = Argument.getArgument("z");
 
     private static final Constable NULL_CONSTABLE = new Constable() {
         @Override

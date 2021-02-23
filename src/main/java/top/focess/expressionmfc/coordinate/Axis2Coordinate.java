@@ -6,7 +6,9 @@ import top.focess.expressionmfc.equation.EquationImp;
 import top.focess.expressionmfc.equation.Solution;
 import top.focess.expressionmfc.equation.range.Range;
 import top.focess.expressionmfc.exception.*;
+import top.focess.expressionmfc.expression.Simplifiable;
 import top.focess.expressionmfc.expression.simple.constant.SimpleConstantDouble;
+import top.focess.expressionmfc.operator.Operator;
 import top.focess.expressionmfc.util.MathHelper;
 
 import javax.swing.*;
@@ -91,21 +93,17 @@ public class Axis2Coordinate extends Coordinate {
             for (CoordinateFunction c : Axis2Coordinate.this.getFunctions()) {
                 Axis2CoordinateFunction function = (Axis2CoordinateFunction) c;
                 g.setColor(function.getColor());
-                for (double x = -width /200.0 ; x < width /200.0; x+=0.005) {
-                    double y;
+                Simplifiable simplifiable = Operator.MINUS.operate(function.getEquation().getLeft(),function.getEquation().getRight()).simplify();
+                for (double x = -width /200.0 ; x < width /200.0; x+=0.001)
+                for (double y = -height / 200.0 ; y < height / 200.0; y+= 0.001){
                     function.getX().setValue(new SimpleConstantDouble(x));
+                    function.getY().setValue(new SimpleConstantDouble(y));
                     try {
-                        System.out.println(x);
-                        y = function.getEquation().solve(function.getY(), Solution.NEWTON, Range.leftCloseRightOpen(-height/200.0,height/200.0) ).getAnswer().doubleValue();
-                        function.getY().setUnknown();
-                    } catch (DividedByZeroException | NoSolutionException ignored) {
-                        function.getY().setUnknown();
-                        continue;
-                    } catch (IllegalUnknownArgumentException | UnknownArgumentNotFoundException e) {
+                        if (MathHelper.abs(simplifiable.value().doubleValue()) < 0.001)
+                            g.fillOval((int) (x*100 + width / 2), (int) (height / 2 - y*100), 2, 2);//todo
+                    } catch (UnknownArgumentException | DividedByZeroException e) {
                         throw new CoordinateShowException(e);
                     }
-                    if (MathHelper.abs(y) < height * 100)
-                        g.fillOval((int) (x*100 + width / 2), (int) (height / 2 - y*100), 2, 2);//todo
                 }
             }
         }

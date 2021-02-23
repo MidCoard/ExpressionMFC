@@ -13,11 +13,15 @@ public abstract class Equation {
     private final IExpression left;
     private final IExpression right;
     private final EquationOperator operator;
+    private double step;
+    private double eps;
 
     public Equation(@NonNull IExpression left, @NonNull IExpression right,@NonNull EquationOperator operator) {
         this.left = left;
         this.right = right;
         this.operator = operator;
+        this.step = 1;
+        this.eps = 1e-15;
     }
 
     @NonNull
@@ -30,8 +34,18 @@ public abstract class Equation {
         return right;
     }
 
+    public void setStep(double step) {
+        this.step = step;
+    }
+
+    public void setEps(double eps) {
+        this.eps = eps;
+    }
+
     @NonNull
     public SimpleEquation solve(Argument argument,Solution solution) throws UnknownArgumentNotFoundException, NoSolutionException, IllegalUnknownArgumentException {
+        this.setEps(1e-15);
+        this.setStep(1);
         return this.solve(argument,solution,Range.leftCloseRightOpen(-10000,10000));
     }
 
@@ -46,5 +60,13 @@ public abstract class Equation {
 
     public EquationOperator getOperator() {
         return operator;
+    }
+
+    public double getStep() {
+        return step;
+    }
+
+    public double getEps() {
+        return eps;
     }
 }

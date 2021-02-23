@@ -17,13 +17,10 @@ public class EquationImp extends Equation {
         super(left, right,EquationOperator.EQUAL);
     }
 
-
-
     @Override
     public @NonNull SimpleEquation solve(Argument argument, Solution solution, Range range) throws IllegalUnknownArgumentException, UnknownArgumentNotFoundException, NoSolutionException {
         if (solution == Solution.NEWTON) {
             Simplifiable simplifiable = Operator.MINUS.operate(this.getLeft(), this.getRight()).simpleValue();
-            System.out.println(this.getLeft().simpleValue());
             try {
                 if (!simplifiable.value().isZero())
                     throw new NoSolutionException();
@@ -37,13 +34,13 @@ public class EquationImp extends Equation {
                     throw new NoSolutionException();
                 argument.setValue(new SimpleConstantDouble(x));
                 try {
-                    if (MathHelper.abs(simplifiable.value().doubleValue()) < 1e-15)
+                    if (MathHelper.abs(simplifiable.value().doubleValue()) < this.getEps())
                         break;
                     x = x - fraction.value().doubleValue();
                 } catch (UnknownArgumentException e) {
                     throw new IllegalUnknownArgumentException(e.getUnknownArgument());
                 } catch (DividedByZeroException e) {
-                    x+=0.002;
+                    x += this.getStep();
                 }
             }
             return new SimpleEquationImp(argument,new SimpleConstantDouble(x));
@@ -51,4 +48,5 @@ public class EquationImp extends Equation {
         return null;
         //todo
     }
+
 }
