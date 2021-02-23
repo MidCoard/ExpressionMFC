@@ -27,5 +27,9 @@ public abstract class Equation {
     }
 
     @NonNull
-    public abstract SimpleEquation solve(Argument argument) throws UnknownArgumentNotFoundException, IllegalUnknownArgumentException;
+    public abstract SimpleEquation solve(Argument argument,Solution solution) throws UnknownArgumentNotFoundException, IllegalUnknownArgumentException;
+
+    @Override
+    @NonNull
+    public abstract String toString();
 }

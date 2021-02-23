@@ -68,7 +68,7 @@ public class SimpleDerivative extends Derivative {
         else if (this.getOriginalExpression() instanceof SimpleMonomialable)
             return differentiate((SimpleMonomialable) this.getOriginalExpression(), this.getArgument());
         else if (this.getOriginalExpression() instanceof SimplePolynomial) {
-            MultiExpression multiExpression = new MultiExpression(((SimplePolynomial) this.getOriginalExpression()).getMonomials().get(0));
+            MultiExpression multiExpression = new MultiExpression(differentiate(((SimplePolynomial) this.getOriginalExpression()).getMonomials().get(0),this.getArgument()));
             for (int i = 1; i < ((SimplePolynomial) this.getOriginalExpression()).getMonomials().size(); i++)
                 multiExpression.append(differentiate(((SimplePolynomial) this.getOriginalExpression()).getMonomials().get(i), this.getArgument()));
             return multiExpression.simplify();

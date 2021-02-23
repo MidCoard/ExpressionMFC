@@ -3,6 +3,7 @@ package top.focess.expressionmfc.coordinate;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import top.focess.expressionmfc.argument.Argument;
 import top.focess.expressionmfc.equation.EquationImp;
+import top.focess.expressionmfc.equation.Solution;
 import top.focess.expressionmfc.exception.CoordinateShowException;
 import top.focess.expressionmfc.exception.DividedByZeroException;
 import top.focess.expressionmfc.exception.IllegalUnknownArgumentException;
@@ -93,7 +94,7 @@ public class Axis2Coordinate extends Coordinate {
                     double y;
                     function.getX().setValue(new SimpleConstantDouble(x));
                     try {
-                        y = function.getEquation().solve(function.getY()).getAnswer().doubleValue();
+                        y = function.getEquation().solve(function.getY(), Solution.NEWTON).getAnswer().doubleValue();
                     } catch (DividedByZeroException ignored) {
                         continue;
                     } catch (UnknownArgumentNotFoundException | IllegalUnknownArgumentException e) {

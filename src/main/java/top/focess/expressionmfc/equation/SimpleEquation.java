@@ -11,7 +11,7 @@ public abstract class SimpleEquation extends Equation {
     }
 
     @Override
-    public @NonNull SimpleEquation solve(Argument argument) throws UnknownArgumentNotFoundException {
+    public @NonNull SimpleEquation solve(Argument argument,Solution solution) throws UnknownArgumentNotFoundException {
         if (argument.equals(this.getUnknownArgument()))
             return this;
         else throw new UnknownArgumentNotFoundException(argument);

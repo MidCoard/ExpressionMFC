@@ -1,4 +1,4 @@
-package top.focess.expressionmfc.util;
+package top.focess.expressionmfc.parser;
 
 import com.google.common.collect.Lists;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -24,7 +24,10 @@ public class ExpressionParser {
         this.parse();
     }
 
+    private boolean isBracket;
+
     private void parse() throws InvalidExpressionException {
+        this.isBracket = false;
         Parser parser = new Parser();
         Stack<MultiExpression> expressionStack = new Stack<>();
         expressionStack.push(new MultiExpression(false));
@@ -37,6 +40,7 @@ public class ExpressionParser {
                 expressionStack.peek().addExpression(multiExpression);
                 expressionStack.push(multiExpression);
                 pos++;
+                this.isBracket = false;
             } else if (c == ')') {
                 if (pos == 0)
                     throw new InvalidExpressionException(")");
@@ -47,8 +51,10 @@ public class ExpressionParser {
                 MultiExpression multiExpression;
                 if (!(multiExpression = expressionStack.pop()).checkSize())
                     throw new InvalidExpressionException(multiExpression.toString());
+                this.isBracket = true;
             } else if (c != ' ') {
                 parser.add(c, expressionStack.peek());
+                this.isBracket = false;
             }
         }
         IExpression expression = parser.getExpression();
@@ -107,7 +113,7 @@ public class ExpressionParser {
                 this.first = false;
                 if (Character.isAlphabetic(c))
                     this.argument = true;
-                else if (Character.isDigit(c) || c == '.')
+                else if (Character.isDigit(c) || c == '.' || c == '-')
                     this.number = true;
                 else throw new InvalidExpressionException(this.stringBuilder.toString());
             } else if (this.argument) {
@@ -123,11 +129,24 @@ public class ExpressionParser {
             String temp = this.stringBuilder.toString() + c;
             for (Operator operator : Operator.values())
                 if (temp.endsWith(operator.getName())) {
-                    IExpression exp = this.getExpression();
-                    if (exp != null)
-                        expression.addExpression(exp);
-                    expression.addOperator(operator);
-                    return true;
+                    if (operator == Operator.MINUS) {
+                        if (ExpressionParser.this.isBracket) {
+                            expression.addOperator(operator);
+                            return true;
+                        }
+                        IExpression exp = this.getExpression();
+                        if (exp != null) {
+                            expression.addExpression(exp);
+                            expression.addOperator(operator);
+                            return true;
+                        } else return false;
+                    } else {
+                        IExpression exp = this.getExpression();
+                        if (exp != null)
+                            expression.addExpression(exp);
+                        expression.addOperator(operator);
+                        return true;
+                    }
                 }
             return false;
         }
@@ -141,7 +160,7 @@ public class ExpressionParser {
             return unknownArgument;
         }
 
-        private IExpression getExpression() {
+        private IExpression getExpression() throws InvalidExpressionException {
             if (!this.argument && !this.number)
                 return null;
             else if (this.argument) {
@@ -149,7 +168,13 @@ public class ExpressionParser {
                 this.reset();
                 return unknownArgument;
             } else {
-                SimpleConstantDouble simpleConstantDouble = new SimpleConstantDouble(Double.parseDouble(stringBuilder.toString()));
+                SimpleConstantDouble simpleConstantDouble;
+                try {
+                    simpleConstantDouble = new SimpleConstantDouble(Double.parseDouble(stringBuilder.toString()));
+                }
+                catch (NumberFormatException e) {
+                    throw new InvalidExpressionException(stringBuilder.toString());
+                }
                 this.reset();
                 return simpleConstantDouble;
             }
