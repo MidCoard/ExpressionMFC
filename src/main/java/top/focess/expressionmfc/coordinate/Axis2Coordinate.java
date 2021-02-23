@@ -4,10 +4,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import top.focess.expressionmfc.argument.Argument;
 import top.focess.expressionmfc.equation.EquationImp;
 import top.focess.expressionmfc.equation.Solution;
-import top.focess.expressionmfc.exception.CoordinateShowException;
-import top.focess.expressionmfc.exception.DividedByZeroException;
-import top.focess.expressionmfc.exception.IllegalUnknownArgumentException;
-import top.focess.expressionmfc.exception.UnknownArgumentNotFoundException;
+import top.focess.expressionmfc.equation.range.Range;
+import top.focess.expressionmfc.exception.*;
 import top.focess.expressionmfc.expression.simple.constant.SimpleConstantDouble;
 import top.focess.expressionmfc.util.MathHelper;
 
@@ -38,6 +36,10 @@ public class Axis2Coordinate extends Coordinate {
         if (this.frame.isVisible())
             this.frame.repaint();
         else this.frame.setVisible(true);
+    }
+
+    public @NonNull Axis2CoordinateFunction append(EquationImp equation) {
+        return this.append(equation,Argument.getArgument("x"),Argument.getArgument("y"));
     }
 
     public static class Axis2CoordinateFunction extends CoordinateFunction {
@@ -89,19 +91,21 @@ public class Axis2Coordinate extends Coordinate {
             for (CoordinateFunction c : Axis2Coordinate.this.getFunctions()) {
                 Axis2CoordinateFunction function = (Axis2CoordinateFunction) c;
                 g.setColor(function.getColor());
-                for (int i = -width / 2; i < width / 2; i++) {
-                    double x = i;//todo
+                for (double x = -width /200.0 ; x < width /200.0; x+=0.005) {
                     double y;
                     function.getX().setValue(new SimpleConstantDouble(x));
                     try {
-                        y = function.getEquation().solve(function.getY(), Solution.NEWTON).getAnswer().doubleValue();
-                    } catch (DividedByZeroException ignored) {
+                        System.out.println(x);
+                        y = function.getEquation().solve(function.getY(), Solution.NEWTON, Range.leftCloseRightOpen(-height/200.0,height/200.0) ).getAnswer().doubleValue();
+                        function.getY().setUnknown();
+                    } catch (DividedByZeroException | NoSolutionException ignored) {
+                        function.getY().setUnknown();
                         continue;
-                    } catch (UnknownArgumentNotFoundException | IllegalUnknownArgumentException e) {
+                    } catch (IllegalUnknownArgumentException | UnknownArgumentNotFoundException e) {
                         throw new CoordinateShowException(e);
                     }
-                    if (MathHelper.abs(y) < height / 2.0)
-                        g.fillOval((int) (x + width / 2), (int) (y + height / 2), 2, 2);//todo
+                    if (MathHelper.abs(y) < height * 100)
+                        g.fillOval((int) (x*100 + width / 2), (int) (height / 2 - y*100), 2, 2);//todo
                 }
             }
         }

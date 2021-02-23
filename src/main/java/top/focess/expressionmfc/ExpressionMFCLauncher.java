@@ -1,13 +1,14 @@
 package top.focess.expressionmfc;
 
 import top.focess.expressionmfc.argument.Argument;
+import top.focess.expressionmfc.coordinate.Axis2Coordinate;
 import top.focess.expressionmfc.equation.Solution;
 import top.focess.expressionmfc.exception.*;
 import top.focess.expressionmfc.parser.EquationParser;
 
 public class ExpressionMFCLauncher {
 
-    public static void main(String[] args) throws DividedByZeroException, UnknownArgumentException, InvalidExpressionException, InvalidEquationException, UnknownArgumentNotFoundException, IllegalUnknownArgumentException {
+    public static void main(String[] args) throws DividedByZeroException, UnknownArgumentException, InvalidExpressionException, InvalidEquationException, IllegalUnknownArgumentException, UnknownArgumentNotFoundException, NoSolutionException {
 //        Argument argument = new Argument("a", SimpleConstantLong.ONE);
 //        SimpleFraction s = (SimpleFraction) argument.multiply(new SimpleConstantLong(5)).divided(SimpleConstantLong.ZERO).reverse().plus(SimpleConstantLong.ONE);
 //        System.out.println(s);
@@ -19,13 +20,15 @@ public class ExpressionMFCLauncher {
 //        ExpressionParser expressionParser = new ExpressionParser(" 1 - 2 * x");
 //        Derivative derivative = new Derivative(expressionParser.getExpression().simplify(),Argument.getArgument("x"));
 //        System.out.println(derivative.simplify());
-        EquationParser parser1 = new EquationParser("1*x = x * x * 2");
-        System.out.println(parser1.getEquation().solve(Argument.getArgument("x"), Solution.NEWTON).getAnswer());
+//        EquationParser parser1 = new EquationParser("y =-1* x*x");
+        EquationParser parser2 = new EquationParser("y * y = x");
+//        System.out.println(parser1.getEquation().solve(Argument.getArgument("x"), Solution.NEWTON).getAnswer());
 //        IExpression expression = parser.getExpression();
 //        System.out.println(parser1.getEquation());
-//        Axis2Coordinate axis2Coordinate = new Axis2Coordinate();
+        Axis2Coordinate axis2Coordinate = new Axis2Coordinate();
 //        axis2Coordinate.append(parser1.getEquation(), Argument.getArgument("x"),Argument.getArgument("y"));
-//        axis2Coordinate.show();
+        axis2Coordinate.append(parser2.getEquation());
+        axis2Coordinate.show();
 //        SimpleMonomial simpleMonomial = new SimpleMonomial(SimpleConstantLong.ONE, Argument.getArgument("f"));
 //        System.out.println(simpleMonomial);
 //        System.out.println(simpleMonomial.simpleValue());

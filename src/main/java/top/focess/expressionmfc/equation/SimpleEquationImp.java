@@ -7,11 +7,6 @@ import top.focess.expressionmfc.expression.Constable;
 public class SimpleEquationImp extends SimpleEquation{
 
     public SimpleEquationImp(Argument left, Constable right) {
-        super(left, right);
-    }
-
-    @Override
-    public @NonNull String toString() {
-        return this.getLeft() + " = " + this.getRight();
+        super(left, right,EquationOperator.EQUAL);
     }
 }
