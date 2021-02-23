@@ -1,6 +1,5 @@
 package top.focess.expressionmfc;
 
-import org.checkerframework.checker.units.qual.A;
 import top.focess.expressionmfc.argument.Argument;
 import top.focess.expressionmfc.coordinate.Axis2Coordinate;
 import top.focess.expressionmfc.equation.EquationImp;
@@ -9,7 +8,6 @@ import top.focess.expressionmfc.exception.*;
 import top.focess.expressionmfc.expression.complex.Derivative;
 import top.focess.expressionmfc.expression.complex.Fraction;
 import top.focess.expressionmfc.expression.simple.SimpleMonomial;
-import top.focess.expressionmfc.expression.simple.SimpleMonomialable;
 import top.focess.expressionmfc.expression.simple.SimplePolynomial;
 import top.focess.expressionmfc.expression.simple.constant.SimpleConstantDouble;
 import top.focess.expressionmfc.expression.simple.constant.SimpleConstantFraction;
@@ -17,11 +15,7 @@ import top.focess.expressionmfc.expression.simple.constant.SimpleConstantLong;
 import top.focess.expressionmfc.parser.EquationParser;
 import top.focess.expressionmfc.parser.ExpressionParser;
 
-import java.awt.*;
-
-import static top.focess.expressionmfc.argument.Argument.*;
-
-public class ExpressionMFCLauncher {
+public class test {
 
     public static void main(String[] args) throws DividedByZeroException, UnknownArgumentException, InvalidExpressionException, InvalidEquationException, IllegalUnknownArgumentException, UnknownArgumentNotFoundException, NoSolutionException {
         Argument argument = Argument.X;// argument x;
@@ -48,12 +42,12 @@ public class ExpressionMFCLauncher {
         System.out.println(equation); // x = 1 * x * x
         EquationParser equationParser = new EquationParser("x*x=x");
         System.out.println(equationParser.getEquation()); // x * x = x
-        System.out.println(equationParser.getEquation().solve(Argument.X,Solution.NEWTON).getAnswer().doubleValue()); // -1.7045252056134216E-23 = 0
+        System.out.println(equationParser.getEquation().solve(Argument.X, Solution.NEWTON).getAnswer().doubleValue()); // -1.7045252056134216E-23 = 0
 
         EquationParser equationParser1 = new EquationParser("y=x + 1");
-        EquationParser equationParser2 = new EquationParser("y=x*x");
+        EquationParser equationParser2 = new EquationParser("y=1/x");
         Axis2Coordinate axis2Coordinate = new Axis2Coordinate();
-        axis2Coordinate.append(equationParser1.getEquation());
+//        axis2Coordinate.append(equationParser1.getEquation());
         axis2Coordinate.append(equationParser2.getEquation());
         axis2Coordinate.show();
     }
