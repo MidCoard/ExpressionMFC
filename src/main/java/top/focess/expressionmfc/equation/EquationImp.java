@@ -20,7 +20,7 @@ public class EquationImp extends Equation {
     @Override
     public @NonNull SimpleEquation solve(Argument argument, Solution solution, Range range) throws IllegalUnknownArgumentException, UnknownArgumentNotFoundException, NoSolutionException {
         if (solution == Solution.NEWTON) {
-            Simplifiable simplifiable = Operator.MINUS.operate(this.getLeft(), this.getRight()).simpleValue();
+            Simplifiable simplifiable = Operator.MINUS.operate(this.getLeft(), this.getRight()).simplify();
             try {
                 if (!simplifiable.value().isZero())
                     throw new NoSolutionException();

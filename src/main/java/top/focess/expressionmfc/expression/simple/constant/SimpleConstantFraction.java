@@ -18,7 +18,7 @@ public class SimpleConstantFraction extends SimpleFraction implements SimpleCons
     public double doubleValue() throws DividedByZeroException {
         if (this.getDenominator().isZero())
             throw new DividedByZeroException(this.getDenominator());
-        return this.getNumerator().doubleValue() / this.getNumerator().doubleValue();
+        return this.getNumerator().doubleValue() / this.getDenominator().doubleValue();
     }
 
     @Override

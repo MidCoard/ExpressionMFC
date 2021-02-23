@@ -45,9 +45,35 @@ public class ConstantExpression extends MultiExpression implements Constable {
         return new ConstantExpression(this.expressions.toArray(new Constable[0]), this.operatorHelpers);
     }
 
+    private SimpleConstable[] constables;
+
     @Override
     public @NonNull SimpleConstable simplify() {
-        return (SimpleConstable) super.simplify();
+        int first = -1;
+        int last = -1;
+        constables = new SimpleConstable[this.expressions.size()];
+        lefts = new Integer[this.expressions.size()];
+        rights = new Integer[this.expressions.size()];
+        for (OperatorHelper operatorHelper : this) {
+            if (last == operatorHelper.getPosition())
+                last = operatorHelper.getPosition() + 1;
+            else {
+                first = operatorHelper.getPosition();
+                last = operatorHelper.getPosition() + 1;
+            }
+            SimpleConstable a = getOrDefaultConstable(getLeft(first)).simplify();
+            SimpleConstable b = getOrDefaultConstable(getRight(last)).simplify();
+            constables[getLeft(first)] = constables[getRight(last)] = operatorHelper.getOperator().operate(a, b);
+            rights[first] = last;
+            lefts[last] = first;
+        }
+        return getOrDefaultConstable(0).simplify();
+    }
+
+    private Constable getOrDefaultConstable(int pos) {
+        if (constables[pos] == null)
+            return (Constable) this.expressions.get(pos);
+        else return constables[pos];
     }
 
     @Override

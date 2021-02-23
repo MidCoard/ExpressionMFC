@@ -1,10 +1,21 @@
 package top.focess.expressionmfc;
 
+import org.checkerframework.checker.units.qual.A;
 import top.focess.expressionmfc.argument.Argument;
 import top.focess.expressionmfc.coordinate.Axis2Coordinate;
+import top.focess.expressionmfc.equation.EquationImp;
 import top.focess.expressionmfc.equation.Solution;
 import top.focess.expressionmfc.exception.*;
+import top.focess.expressionmfc.expression.complex.Derivative;
+import top.focess.expressionmfc.expression.complex.Fraction;
+import top.focess.expressionmfc.expression.simple.SimpleMonomial;
+import top.focess.expressionmfc.expression.simple.SimpleMonomialable;
+import top.focess.expressionmfc.expression.simple.SimplePolynomial;
+import top.focess.expressionmfc.expression.simple.constant.SimpleConstantDouble;
+import top.focess.expressionmfc.expression.simple.constant.SimpleConstantFraction;
+import top.focess.expressionmfc.expression.simple.constant.SimpleConstantLong;
 import top.focess.expressionmfc.parser.EquationParser;
+import top.focess.expressionmfc.parser.ExpressionParser;
 
 import java.awt.*;
 
@@ -13,68 +24,37 @@ import static top.focess.expressionmfc.argument.Argument.*;
 public class ExpressionMFCLauncher {
 
     public static void main(String[] args) throws DividedByZeroException, UnknownArgumentException, InvalidExpressionException, InvalidEquationException, IllegalUnknownArgumentException, UnknownArgumentNotFoundException, NoSolutionException {
-//        Argument argument = new Argument("a", SimpleConstantLong.ONE);
-//        SimpleFraction s = (SimpleFraction) argument.multiply(new SimpleConstantLong(5)).divided(SimpleConstantLong.ZERO).reverse().plus(SimpleConstantLong.ONE);
-//        System.out.println(s);
-//        System.out.println(s.value().doubleValue());
-//        argument.setValue(SimpleConstantLong.ZERO);
-//        System.out.println(argument.multiply(new SimpleConstantLong(5)).value().doubleValue());
+        Argument argument = Argument.X;// argument x;
+        Fraction fraction = new Fraction(SimpleConstantLong.ONE,argument); // fraction x/1
+        Derivative derivative = new Derivative(fraction,argument); // d(1/x)/dx
 
-//        ExpressionParser parser = new ExpressionParser("-1.0.0 + a");
-//        ExpressionParser expressionParser = new ExpressionParser(" 1 - 2 * x");
-//        Derivative derivative = new Derivative(expressionParser.getExpression().simplify(),Argument.getArgument("x"));
-//        System.out.println(derivative.simplify());
-//        EquationParser parser1 = new EquationParser("y =-1* x*x");
-        EquationParser parser2 = new EquationParser("x * x = x");
-        EquationParser parser1 = new EquationParser("x * y = x");
-//        System.out.println(parser1.getEquation().solve(Argument.getArgument("x"), Solution.NEWTON).getAnswer());
-//        IExpression expression = parser.getExpression();
-//        System.out.println(parser2.getEquation());
-//        System.out.println(parser2.getEquation().solve(X,Solution.NEWTON));
+        SimpleMonomial a = new SimpleMonomial(new SimpleConstantDouble(2.3),Argument.Y); // 2.3y
+        SimpleMonomial b = new SimpleMonomial(new SimpleConstantFraction(new SimpleConstantLong(2),new SimpleConstantLong(3)),Argument.X); // 2/3*x
+        SimplePolynomial simplePolynomial = new SimplePolynomial(a,b);// 2.3y + 2/3*x
+        Argument.X.setValue(new SimpleConstantDouble(1));
+        Argument.Y.setValue(new SimpleConstantDouble(1));
+        System.out.println(simplePolynomial.value().doubleValue()); // 2.9666666666666663
+        System.out.println(simplePolynomial.value().simplify().doubleValue()); // 8.899999999999999 / 3
+        ExpressionParser parser = new ExpressionParser("y/x");
+        System.out.println(new Derivative(parser.getExpression(),parser.getArgument("x")).simpleValue()); // (-1.0 + 1.0 * (y)') / 1.0
+
+
+        System.out.println(simplePolynomial); // 2 / 3 * x + 2.3 * y
+
+        SimpleConstantLong one = SimpleConstantLong.ONE;
+        SimpleConstantLong two = new SimpleConstantLong(2);
+
+        EquationImp equation = new EquationImp(Argument.X,new SimpleMonomial(SimpleConstantLong.ONE,Argument.X,Argument.X));
+        System.out.println(equation); // x = 1 * x * x
+        EquationParser equationParser = new EquationParser("x*x=x");
+        System.out.println(equationParser.getEquation()); // x * x = x
+        System.out.println(equationParser.getEquation().solve(Argument.X,Solution.NEWTON).getAnswer().doubleValue()); // -1.7045252056134216E-23 = 0
+
+        EquationParser equationParser1 = new EquationParser("y=x + 1");
+        EquationParser equationParser2 = new EquationParser("y=x*x");
         Axis2Coordinate axis2Coordinate = new Axis2Coordinate();
-//        axis2Coordinate.append(parser1.getEquation(), Argument.getArgument("x"),Argument.getArgument("y"));
-        axis2Coordinate.append(parser2.getEquation());
-        axis2Coordinate.append(parser1.getEquation(),X,Y, Color.GREEN);
+        axis2Coordinate.append(equationParser1.getEquation());
+        axis2Coordinate.append(equationParser2.getEquation());
         axis2Coordinate.show();
-//        SimpleMonomial simpleMonomial = new SimpleMonomial(SimpleConstantLong.ONE, Argument.getArgument("f"));
-//        System.out.println(simpleMonomial);
-//        System.out.println(simpleMonomial.simpleValue());
-//        ExpressionParser expressionParser = new ExpressionParser(" a *(c*((b+a+c)*d))/(a+b) + 0.2 - 2 * 3 + 100 + a*100/a");
-//        MultiExpression expression = expressionParser.getExpression();
-//        System.out.println(expression);
-//        Argument a = expressionParser.getArgument("a");
-//        ExpressionParser parser2 = new ExpressionParser("-1*f/2");
-////        SimpleFraction simpleFraction = (SimpleFraction) parser2.getExpression().simplify();
-////        System.out.println(simpleFraction.getNumerator().getClass());
-//        IExpression constantFraction = new Derivative(parser2.getExpression().simplify(), parser2.getArgument("f")).simplify();
-//        System.out.println(constantFraction);
-//        ExpressionParser parser = new ExpressionParser("1*f/g*g");
-//        IExpression expression1 = parser.getExpression();
-//        System.out.println(parser.getExpression());
-//        Argument f = parser.getArgument("f");
-//        System.out.println(f == parser2.getArgument("f"));
-////        parser.getArgument("g").setValue(SimpleConstantLong.ONE);
-//        SimpleFraction simpleFraction = (SimpleFraction) new Derivative(parser.getExpression(), parser2.getArgument("f")).simplify();
-//        System.out.println(simpleFraction.getDenominator());
-//        System.out.println(new Derivative(parser.getExpression(), parser2.getArgument("f")).simplify().value().doubleValue());
-//        Argument b = expressionParser.getArgument("b");
-//        Argument c = expressionParser.getArgument("c");
-//        Argument d = expressionParser.getArgument("d");
-//        a.setValue(SimpleConstantLong.ONE);
-//        System.out.println(expression.simpleValue());
-//        b.setValue(SimpleConstantLong.ONE);
-//        System.out.println(expression.simpleValue());
-//        c.setValue(SimpleConstantLong.ONE);
-//        System.out.println(expression.simpleValue());
-//        d.setValue(SimpleConstantLong.ONE);
-//        System.out.println(expression.simpleValue());
-//        System.out.println(expression.simplify());
-//        System.out.println(expression.simplify().value());
-//        System.out.println(expression.simplify().value().simplify());
-//        System.out.println(expression.value().doubleValue());
-//        d.setValue(new SimpleConstantDouble(200));
-//        System.out.println(expression.value().doubleValue());
-//        System.out.println(expressionParser.getArguments());
-
     }
 }
