@@ -13,7 +13,7 @@ Not much to say, let’s look at an example,
 
 ```
         Argument argument = Argument.X; // argument x;
-        Fraction fraction = new Fraction(SimpleConstantLong.ONE,argument); // fraction x/1
+        Fraction fraction = new Fraction(SimpleConstantLong.ONE,argument); // fraction 1/x
         Derivative derivative = new Derivative(fraction,argument); // d(1/x)/dx 
         
         SimpleMonomial a = new SimpleMonomial(new SimpleConstantDouble(2.3),Argument.Y); // 2.3y
