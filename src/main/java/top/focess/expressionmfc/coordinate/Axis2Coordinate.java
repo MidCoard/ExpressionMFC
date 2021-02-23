@@ -89,8 +89,8 @@ public class Axis2Coordinate extends Coordinate {
             int width = this.getWidth();
             g.drawLine(0, height / 2, width, height / 2);
             g.drawLine(width / 2, 0, width / 2, height);
-            int base = Axis2Coordinate.this.getFunctions().size() * width * width * 100;
-            int pos = 0;
+            double base = Axis2Coordinate.this.getFunctions().size() * width * width * 100;
+            double pos = 0;
             for (CoordinateFunction c : Axis2Coordinate.this.getFunctions()) {
                 Axis2CoordinateFunction function = (Axis2CoordinateFunction) c;
                 g.setColor(function.getColor());
@@ -98,7 +98,7 @@ public class Axis2Coordinate extends Coordinate {
                 for (double x = -width /200.0 ; x < width /200.0; x+=0.001)
                 for (double y = -height / 200.0 ; y < height / 200.0; y+= 0.001){
                     pos++;
-                    System.out.println(100*pos/(double)base);
+                    System.out.println(pos/base * 100);
                     function.getX().setValue(new SimpleConstantDouble(x));
                     function.getY().setValue(new SimpleConstantDouble(y));
                     try {
